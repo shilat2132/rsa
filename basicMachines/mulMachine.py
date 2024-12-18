@@ -5,7 +5,7 @@ class mulPQ(Tm):
     a class that inherits from the Turing Machine's class
         - gets p and q in 2 different tapes in unary base and store the multiplication in the third tape
     """
-    def __init__(self, tapes, currentState):
+    def __init__(self, tapes):
         """
             initiates the multiplication tm fields and builds its delta table
         """
@@ -33,4 +33,4 @@ class mulPQ(Tm):
         }
 
 
-        super().__init__(tapes, states, currentState, deltaTable, 3)
+        super().__init__(tapes, states, "start", deltaTable, 3)

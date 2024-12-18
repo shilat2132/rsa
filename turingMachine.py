@@ -1,3 +1,5 @@
+from utils import getHeadIndex
+
 class Tm:
     """
     a class for general turing machine
@@ -20,10 +22,11 @@ class Tm:
         """
         # initializes each tape with 2 spaces in the start and end of input
         self.tapes =  [['_', '_'] + tape + ['_', '_'] for tape in tapes]
+     
         # if we got less tapes than the number of tapes in the machine, we initialize the missing tapes
         if len(tapes)< numOfTapes:
-            for i in range(numOfTapes - len(tapes)+1):
-                self.tapes.push(["_", "_", "_", "_"])
+            for i in range(numOfTapes - len(tapes)):
+                self.tapes.append(["_", "_", "_", "_"])
         
         self.states = states
         self.deltaTable = deltaTable
@@ -31,8 +34,8 @@ class Tm:
         self.numOfTapes = numOfTapes
         self.acc, self.rej = acc, rej
 
-        # initialize position of the head in each tape to be in index 2 (after the 2 spaces)
-        self.pos = [2 for i in range(numOfTapes)] #[1, 3, 4]
+        # initialize position of the head in each tape to be the first character that's different from "_" or the first one if there's no character like that
+        self.pos = [getHeadIndex(t) for t in self.tapes] 
 
     
     def __repr__(self):
