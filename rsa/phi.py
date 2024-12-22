@@ -10,7 +10,7 @@ def phiN(p: int, q: int):
     t1 = ["1" for i in range(p)]
     t2 = ["1" for i in range(q)]
 
-    # create the delta table for substracting 1 from each tape
+    # create the delta table for subtracting 1 from each tape
     deltaTable = {
         # q0
         ("q0", "_", "1"): {"newState": "q0", "write": ["_", "1"], "movement": ["S", "R"] },
@@ -23,12 +23,12 @@ def phiN(p: int, q: int):
     }
 
     states = {"q0", "sub"}
-    substractMachine = Tm([t1, t2], states, "q0", deltaTable, 2)
-    substractMachine.runMachine()
-    print("the machine after substraction: \n{m}".format(m=substractMachine))
+    subtractMachine = Tm([t1, t2], states, "q0", deltaTable, 2)
+    subtractMachine.runMachine()
+    print("the machine after substraction: \n{m}".format(m=subtractMachine))
 
     # create a multiplication machine with the tapes
-    mul = mulPQ(substractMachine.tapes)
+    mul = mulPQ(subtractMachine.tapes)
     mul.runMachine()
     print("the machine after multiplication: \n{m}".format(m=mul))
 
