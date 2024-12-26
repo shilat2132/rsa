@@ -1,5 +1,7 @@
 from utils import getHeadIndex
 
+
+
 class Tm:
     """
     a class for general turing machine
