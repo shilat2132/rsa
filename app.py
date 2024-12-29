@@ -1,11 +1,18 @@
 from basicMachines.mulMachine import mulPQ
+from basicMachines.divMachine import divMachine
 from rsa.phi import phiN
+from basicMachines.subMachine import subMachine
 
+# phi
+# p = ["1", "1", "1"]
+# q = ["1", "1", "1", "1", "1"]
+# phiN(p, q)
 
-t1 = ["1", "1", "1"]
-t2 = ["1", "1", "1", "1", "1"]
-m = mulPQ([t1, t2, []])
-m.runMachine()
-print("the machine in the end: \n{m}".format(m=m))
+# div
+a = ["1" for i in range(3)]
+b = ["1" for i in range(5)]
+a.insert(0, "-")
+b.insert(0, "-")
 
-# phiN(3, 5)
+subMachine(a, b)
+print("the result of subtraction: {a}".format(a=a))

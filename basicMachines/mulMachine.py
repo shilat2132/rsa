@@ -1,4 +1,4 @@
-from turingMachine import Tm
+from tm import Tm
 
 class mulPQ(Tm):
     """
