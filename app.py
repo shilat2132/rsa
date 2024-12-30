@@ -6,20 +6,19 @@ from tm import Tm
 from basicMachines.remainderMachine import remainderPQ
 from rsa.gcd import Gcd
 
-
+a = ["1" for i in range(24)]
+b = ["1" for i in range(21)]
 
 # remainder
-# m = remainderPQ([t1, t2, []])
-# m.runMachine()
-
-# print("the machine in the end: \n{m}".format(m=m))
+m = remainderPQ([a, b])
+m.runMachine()
+print("the machine in the end: \n{m}".format(m=m))
 
 # gcd
-a = ["1" for i in range(24)]
-b = ["1" for i in range(15)]
-gc = Gcd([a, b])
-gc.runGcdAbstract()
-print("the result of gcd: {d}".format(d= gc.d()))
+
+# gc = Gcd([a, b])
+# gc.runGcdAbstract()
+# print("the result of gcd: {d}".format(d= gc.d()))
 
 # a.insert(0, "-")
 # b.insert(0, "-")
