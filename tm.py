@@ -38,7 +38,7 @@ class Tm:
         self.pos = [getHeadIndex(t) for t in self.tapes]
 
     @staticmethod
-    def staticRunMachine(tapes: list[list[any]], currentState: str, deltaTable: dict, acc= "acc", rej= "rej", pos: list[int] = None):
+    def staticRunMachine(tapes: list[list[any]], currentState: str, deltaTable: dict, stopingState = None, acc= "acc", rej= "rej", pos: list[int] = None):
         """
         Static method to run the Turing machine based on the delta table.
         Includes internal methods `config`, `ensureBoundarySpace`, and `move`.
@@ -117,7 +117,7 @@ class Tm:
         print("starting configuration:")
         config()
         
-        while currentState != acc and currentState != rej:
+        while currentState != acc and currentState != rej and currentState!= stopingState:
             symbols = [t[pos[i]] for i, t in enumerate(tapes)]
             move(symbols)
             config()
@@ -167,11 +167,11 @@ class Tm:
 
 
 
-    def runMachine(self):
+    def runMachine(self, stopingState = None):
         """
         Wrapper instance method that calls the static `staticRunMachine` method.
         """
-        Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.acc, self.rej, self.pos)
+        Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, stopingState, self.acc, self.rej, self.pos)
 
     
    
@@ -180,4 +180,11 @@ class Tm:
         """
             string representation of the machine
         """
-        return "\n".join(str(t) for t in self.tapes)
+        machine = ""
+        for t in self.tapes:
+            i = getHeadIndex(t)
+            num = t.count('1')
+            if t[i] == "-":
+                num = -1*num
+            machine += str(t) + ", the number in this tape: " + str(num) + "\n"
+        return machine

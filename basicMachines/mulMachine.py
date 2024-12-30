@@ -51,3 +51,6 @@ class mulMachine(Tm):
 
 
         super().__init__(tapes, states, "start", deltaTable, 3)
+
+    def result(self):
+        return self.tapes[2]

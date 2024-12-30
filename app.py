@@ -1,30 +1,26 @@
 from basicMachines.mulMachine import mulMachine
 from basicMachines.divMachine import divMachine
 from rsa.phi import phiN
-<<<<<<< HEAD
 from basicMachines.subMachine import subMachine
 from tm import Tm
-=======
 from basicMachines.remainderMachine import remainderPQ
+from rsa.gcd import Gcd
 
 
-t1 = ["1", "1", "1", "1", "1", "1", "1"]
-t2 = ["1", "1", "1", "1"]
-#m = mulPQ([t1, t2, []])
-#m.runMachine()
-#print("the machine in the end: \n{m}".format(m=m))
 
-# phiN(3, 5)
+# remainder
+# m = remainderPQ([t1, t2, []])
+# m.runMachine()
 
-m = remainderPQ([t1, t2, []])
-m.runMachine()
+# print("the machine in the end: \n{m}".format(m=m))
 
-print("the machine in the end: \n{m}".format(m=m))
->>>>>>> rotem
+# gcd
+a = ["1" for i in range(24)]
+b = ["1" for i in range(15)]
+gc = Gcd([a, b])
+gc.runGcdAbstract()
+print("the result of gcd: {d}".format(d= gc.d()))
 
-
-a = ["1" for i in range(4)]
-b = ["1" for i in range(2)]
 # a.insert(0, "-")
 # b.insert(0, "-")
 
@@ -33,7 +29,6 @@ b = ["1" for i in range(2)]
 # q = ["1", "1", "1", "1", "1"]
 # phiN(p, q)
 
-<<<<<<< HEAD
 # div
 # d= divMachine([a, b])
 # d.runMachine()
@@ -49,13 +44,7 @@ b = ["1" for i in range(2)]
 
 
 # mul
-m= mulMachine([a, b])
-m.runMachine()
-print("the machine of multiplication: {m}".format(m=m))
-=======
-t1 = ["_"]
-t2 = ["_"]
-d = DivMachine([t1, t2, []])
-d.runMachine()
-print("the machine in the end: \n{d}".format(d=d))
->>>>>>> rotem
+# m= mulMachine([a, b])
+# m.runMachine()
+# print("the machine of multiplication: {m}".format(m=m))
+
