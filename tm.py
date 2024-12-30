@@ -122,7 +122,51 @@ class Tm:
             move(symbols)
             config()
 
-    
+    @staticmethod
+    def emptyTape(t: list[str]):
+        """
+        given a tape of the machine, erase all characters different from '_'
+        """
+
+        deltaTable= {
+            ("delete", "1") : {"newState": "delete", "write": ["_"], "movement": ['R']},
+            ("delete", "-") : {"newState": "delete", "write": ["_"], "movement": ['R']},
+            ("delete", "_") : {"newState": "acc", "write": ["_"], "movement": ['S']},
+        }
+
+        Tm.staticRunMachine([t], "delete", deltaTable)
+
+
+
+    @staticmethod
+    def copyTape(a: list[str], b:list[str]):
+        """
+        given 2 tapes in a machine - copy tape a to tape b
+        """
+
+        deltaTable = {
+            ("copy", "1", "1") : {"newState": "copy", "write": ["1", "1"], "movement": ['R', "R"]},
+            ("copy", "1", "-") : {"newState": "copy", "write": ["1", "1"], "movement": ['R', "R"]},
+            ("copy", "1", "_") : {"newState": "copy", "write": ["1", "1"], "movement": ['R', "R"]},
+
+            ("copy", "-", "1") : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
+            ("copy", "-", "-") : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
+            ("copy", "-", "_") : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
+
+            ("copy", "_", "_") : {"newState": "acc", "write": ["_", "_"], "movement": ['S', "S"]},
+
+            ("copy", "_", "1") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("copy", "_", "-") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+
+            ("deleteRest", "_", "1") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("deleteRest", "_", "-") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("deleteRest", "_", "_") : {"newState": "acc", "write": ["_", "_"], "movement": ['S', "S"]},
+        }
+
+        Tm.staticRunMachine([a, b], "copy", deltaTable)
+
+
+
     def runMachine(self):
         """
         Wrapper instance method that calls the static `staticRunMachine` method.
@@ -130,6 +174,8 @@ class Tm:
         Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.acc, self.rej, self.pos)
 
     
+   
+
     def __repr__(self):
         """
             string representation of the machine

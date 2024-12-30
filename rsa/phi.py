@@ -1,5 +1,5 @@
 from tm import Tm
-from basicMachines.mulMachine import mulPQ
+from basicMachines.mulMachine import mulMachine
 
 def phiN(p: list[str], q: list[str]):
     """
@@ -23,7 +23,7 @@ def phiN(p: list[str], q: list[str]):
 
     Tm.staticRunMachine([p, q], "q0", deltaTable)
 
-    phi = mulPQ([p, q])
+    phi = mulMachine([p, q])
     phi.runMachine()
     print("phi(n): \n{p}".format(p=phi.tapes[2]))
 
