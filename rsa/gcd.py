@@ -89,4 +89,8 @@ class Gcd(Tm):
 
     def d(self):
         return self.tapes[self.tapesDict["r(i-1)"]]
+    def t(self):
+        return self.tapes[self.tapesDict["t(i-1)"]]
+    def s(self):
+        return self.tapes[self.tapesDict["s(i-1)"]]
 
