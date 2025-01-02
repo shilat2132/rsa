@@ -19,6 +19,10 @@ print("the machine in the end: \n{m}".format(m=m))
 # gc = Gcd([a, b])
 # gc.runGcdAbstract()
 # print("the result of gcd: {d}".format(d= gc.d()))
+# print("the result of t: {t}".format(d= gc.t()))
+# print("the result of s: {t}".format(s= gc.s()))
+
+
 
 # a.insert(0, "-")
 # b.insert(0, "-")
@@ -29,9 +33,9 @@ print("the machine in the end: \n{m}".format(m=m))
 # phiN(p, q)
 
 # div
-# d= divMachine([a, b])
-# d.runMachine()
-# print("the machine of division: {d}".format(d=d))
+d= divMachine([a, b])
+d.runMachine()
+print("the machine of division: {d}".format(d=d))
 
 # copy
 # Tm.copyTape(a, b)
