@@ -6,8 +6,8 @@ from tm import Tm
 from basicMachines.remainderMachine import remainderPQ
 from rsa.gcd import Gcd
 
-a = ["1" for i in range(17)]
-b = ["1" for i in range(6)]
+#a = ["1" for i in range(17)]
+#b = ["1" for i in range(6)]
 
 # remainder
 # m = remainderPQ([a, b])
@@ -17,21 +17,18 @@ b = ["1" for i in range(6)]
 
 # gcd
 
-gc = Gcd([a, b])
-gc.runGcdAbstract()
-print("the result of gcd: {d}".format(d= gc.d()))
+#gc = Gcd([a, b])
+#gc.runGcdAbstract()
+#print("the result of gcd: {d}".format(d= gc.d()))
 
-<<<<<<< HEAD
-=======
-m = remainderPQ([t1, t2, []])
-m.runMachine()
+#m = remainderPQ([t1, t2, []])
+#m.runMachine()
 
-print("the machine in the end: \n{m}".format(m=m))
+#print("the machine in the end: \n{m}".format(m=m))
 
 
 # a = ["1" for i in range(4)]
 # b = ["1" for i in range(2)]
->>>>>>> rotem
 # a.insert(0, "-")
 # b.insert(0, "-")
 
@@ -58,12 +55,30 @@ print("the machine in the end: \n{m}".format(m=m))
 # m= mulMachine([a, b])
 # m.runMachine()
 # print("the machine of multiplication: {m}".format(m=m))
-<<<<<<< HEAD
 
-=======
 # t1 = ["_"]
 # t2 = ["_"]
 # d = DivMachine([t1, t2, []])
 # d.runMachine()
 # print("the machine in the end: \n{d}".format(d=d))
->>>>>>> rotem
+
+
+
+# יצירת טייפים
+a = ["-"] + ["1" for i in range(17)]  # טייפ ראשון שלילי
+b = ["1" for i in range(6)]           # טייפ שני
+
+# הדפסה ראשונית של הטייפים לפני טיפול
+print("Initial tapes:")
+print("Tape a: ", a)
+print("Tape b: ", b)
+
+# שלח את הטייפים למחלקת השארית
+m = remainderPQ([a, b, []])  # שלח את הטייפים למחלקת השארית
+m.runMachine()  # הרץ את המכונה
+
+# אחרי שהרצת את המכונה, הדפס את התוצאה
+print("After running remainder machine, the tapes are:")
+print("Tape a: ", m.tapes[0])  # הטייפ הראשון אחרי הריצה
+print("Tape b: ", m.tapes[1])  # הטייפ השני אחרי הריצה
+print("Remainder tape (third tape): ", m.tapes[2])  # טייפ השארית (השלישי)ייפ השארית (השלישי)
