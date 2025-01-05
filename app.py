@@ -21,6 +21,17 @@ gc = Gcd([a, b])
 gc.runGcdAbstract()
 print("the result of gcd: {d}".format(d= gc.d()))
 
+<<<<<<< HEAD
+=======
+m = remainderPQ([t1, t2, []])
+m.runMachine()
+
+print("the machine in the end: \n{m}".format(m=m))
+
+
+# a = ["1" for i in range(4)]
+# b = ["1" for i in range(2)]
+>>>>>>> rotem
 # a.insert(0, "-")
 # b.insert(0, "-")
 
@@ -47,4 +58,12 @@ print("the result of gcd: {d}".format(d= gc.d()))
 # m= mulMachine([a, b])
 # m.runMachine()
 # print("the machine of multiplication: {m}".format(m=m))
+<<<<<<< HEAD
 
+=======
+# t1 = ["_"]
+# t2 = ["_"]
+# d = DivMachine([t1, t2, []])
+# d.runMachine()
+# print("the machine in the end: \n{d}".format(d=d))
+>>>>>>> rotem
