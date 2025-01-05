@@ -64,21 +64,21 @@ from rsa.gcd import Gcd
 
 
 
-# יצירת טייפים
-a = ["-"] + ["1" for i in range(17)]  # טייפ ראשון שלילי
-b = ["1" for i in range(6)]           # טייפ שני
 
-# הדפסה ראשונית של הטייפים לפני טיפול
+a = ["-"] + ["1" for i in range(17)]  
+b = ["1" for i in range(6)]           
+
+
 print("Initial tapes:")
 print("Tape a: ", a)
 print("Tape b: ", b)
 
-# שלח את הטייפים למחלקת השארית
-m = remainderPQ([a, b, []])  # שלח את הטייפים למחלקת השארית
-m.runMachine()  # הרץ את המכונה
 
-# אחרי שהרצת את המכונה, הדפס את התוצאה
+m = remainderPQ([a, b, []])  
+m.runMachine()  
+
+
 print("After running remainder machine, the tapes are:")
-print("Tape a: ", m.tapes[0])  # הטייפ הראשון אחרי הריצה
-print("Tape b: ", m.tapes[1])  # הטייפ השני אחרי הריצה
-print("Remainder tape (third tape): ", m.tapes[2])  # טייפ השארית (השלישי)ייפ השארית (השלישי)
+print("Tape a: ", m.tapes[0])  
+print("Tape b: ", m.tapes[1])  
+print("Remainder tape (third tape): ", m.tapes[2])  
