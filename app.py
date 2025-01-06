@@ -8,6 +8,8 @@ from rsa.gcd import Gcd
 
 #a = ["1" for i in range(17)]
 #b = ["1" for i in range(6)]
+a = ["1" for i in range(26)]
+b = ["1" for i in range(7)]
 
 # remainder
 # m = remainderPQ([a, b])
@@ -25,6 +27,15 @@ from rsa.gcd import Gcd
 #m.runMachine()
 
 #print("the machine in the end: \n{m}".format(m=m))
+
+# gcd
+
+gc = Gcd([a, b])
+gc.runGcdAbstract()
+print("the result of gcd: {d}".format(d= gc.d()))
+print("the result of t: {t}".format(t= gc.t()))
+print("the result of s: {s}".format(s= gc.s()))
+
 
 
 # a = ["1" for i in range(4)]
