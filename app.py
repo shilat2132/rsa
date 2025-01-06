@@ -8,13 +8,17 @@ from rsa.gcd import Gcd
 
 #a = ["1" for i in range(17)]
 #b = ["1" for i in range(6)]
-a = ["1" for i in range(26)]
-b = ["1" for i in range(7)]
+a = ["1" for i in range(7)]
+b = ["1" for i in range(26)]
+a.insert(0, "-")
+
+
+
 
 # remainder
-# m = remainderPQ([a, b])
-# m.runMachine()
-# print("the machine in the end: \n{m}".format(m=m))
+m = remainderPQ([a, b])
+m.runMachine()
+print("the machine in the end: \n{m}".format(m=m))
 
 
 # gcd
@@ -30,11 +34,11 @@ b = ["1" for i in range(7)]
 
 # gcd
 
-gc = Gcd([a, b])
-gc.runGcdAbstract()
-print("the result of gcd: {d}".format(d= gc.d()))
-print("the result of t: {t}".format(t= gc.t()))
-print("the result of s: {s}".format(s= gc.s()))
+# gc = Gcd([a, b])
+# gc.runGcdAbstract()
+# print("the result of gcd: {d}".format(d= gc.d()))
+# print("the result of t: {t}".format(t= gc.t()))
+# print("the result of s: {s}".format(s= gc.s()))
 
 
 
@@ -76,20 +80,20 @@ print("the result of s: {s}".format(s= gc.s()))
 
 
 
-a = ["-"] + ["1" for i in range(17)]  
-b = ["1" for i in range(6)]           
+# a = ["-"] + ["1" for i in range(17)]  
+# b = ["1" for i in range(6)]           
 
 
-print("Initial tapes:")
-print("Tape a: ", a)
-print("Tape b: ", b)
+# print("Initial tapes:")
+# print("Tape a: ", a)
+# print("Tape b: ", b)
 
 
-m = remainderPQ([a, b, []])  
-m.runMachine()  
+# m = remainderPQ([a, b, []])  
+# m.runMachine()  
 
 
-print("After running remainder machine, the tapes are:")
-print("Tape a: ", m.tapes[0])  
-print("Tape b: ", m.tapes[1])  
-print("Remainder tape (third tape): ", m.tapes[2])  
+# print("After running remainder machine, the tapes are:")
+# print("Tape a: ", m.tapes[0])  
+# print("Tape b: ", m.tapes[1])  
+# print("Remainder tape (third tape): ", m.tapes[2])  
