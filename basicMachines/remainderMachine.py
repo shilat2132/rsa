@@ -7,7 +7,7 @@ from basicMachines.subMachine import subMachine
 from tm import Tm
 
 
-class remainderPQ(Tm):
+class remainderMachine(Tm):
 
 
     def __init__(self, tapes):
@@ -77,26 +77,6 @@ class remainderPQ(Tm):
         else:
             super().runMachine() #a%b
 
-        # # Removing negative sign from the first tape
-        # if tape1.startswith("-"):
-        #     tape1 = tape1[1:]  
-
-        # # Update tapes and perform remainder calculation
-        # self.tapes = [tape1, tape2, ""]
-
-        # # Running the remainder machine using super
-        # super().run(self.tapes)
-
-        # # Access the result from the third tape
-        # tape3 = self.tapes[2]
-
-        # # Perform subtraction between the second tape and the result on the third tape
-        # tapes_subtraction = [tape2, tape3, ""]
-        # subMachine(tapes_subtraction[0], tapes_subtraction[1])
-
-        # # Storing the result on the fourth tape
-        # tape4 = tapes_subtraction[2]
-        # self.tapes.append(tape4)  
-        # return tape4
+    
 
         

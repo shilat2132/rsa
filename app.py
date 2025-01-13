@@ -3,49 +3,33 @@ from basicMachines.divMachine import divMachine
 from rsa.phi import phiN
 from basicMachines.subMachine import subMachine
 from tm import Tm
-from basicMachines.remainderMachine import remainderPQ
-from rsa.gcd import Gcd
+from basicMachines.remainderMachine import remainderMachine
+from rsa.Euclid import Euclid
+from rsa.encryption.binaryMachine import binary
 
-#a = ["1" for i in range(17)]
-#b = ["1" for i in range(6)]
-a = ["1" for i in range(7)]
+a = ["1" for i in range(6)]
 b = ["1" for i in range(26)]
-a.insert(0, "-")
+# a.insert(0, "-")
 
 
-
+# binary
+bin = binary(a)
+print(f"the binary number: {bin}")
 
 # remainder
-m = remainderPQ([a, b])
-m.runMachine()
-print("the machine in the end: \n{m}".format(m=m))
+# m = remainderMachine([a, b])
+# m.runMachine()
+# print("the machine in the end: \n{m}".format(m=m))
 
 
-# gcd
+# Euclid
 
-#gc = Gcd([a, b])
-#gc.runGcdAbstract()
-#print("the result of gcd: {d}".format(d= gc.d()))
+# eu = Euclid([a, b])
+# eu.runEuclidAbstract()
+# print("the result of d: {d}".format(d= eu.d()))
+# print("the result of t: {t}".format(t= eu.t()))
+# print("the result of s: {s}".format(s= eu.s()))
 
-#m = remainderPQ([t1, t2, []])
-#m.runMachine()
-
-#print("the machine in the end: \n{m}".format(m=m))
-
-# gcd
-
-# gc = Gcd([a, b])
-# gc.runGcdAbstract()
-# print("the result of gcd: {d}".format(d= gc.d()))
-# print("the result of t: {t}".format(t= gc.t()))
-# print("the result of s: {s}".format(s= gc.s()))
-
-
-
-# a = ["1" for i in range(4)]
-# b = ["1" for i in range(2)]
-# a.insert(0, "-")
-# b.insert(0, "-")
 
 # phi
 # p = ["1", "1", "1"]
@@ -57,9 +41,6 @@ print("the machine in the end: \n{m}".format(m=m))
 # d.runMachine()
 # print("the machine of division: {d}".format(d=d))
 
-# copy
-# Tm.copyTape(a, b)
-# print(a, b)
 
 # sub
 # subMachine(a, b)
@@ -70,30 +51,3 @@ print("the machine in the end: \n{m}".format(m=m))
 # m= mulMachine([a, b])
 # m.runMachine()
 # print("the machine of multiplication: {m}".format(m=m))
-
-# t1 = ["_"]
-# t2 = ["_"]
-# d = DivMachine([t1, t2, []])
-# d.runMachine()
-# print("the machine in the end: \n{d}".format(d=d))
-
-
-
-
-# a = ["-"] + ["1" for i in range(17)]  
-# b = ["1" for i in range(6)]           
-
-
-# print("Initial tapes:")
-# print("Tape a: ", a)
-# print("Tape b: ", b)
-
-
-# m = remainderPQ([a, b, []])  
-# m.runMachine()  
-
-
-# print("After running remainder machine, the tapes are:")
-# print("Tape a: ", m.tapes[0])  
-# print("Tape b: ", m.tapes[1])  
-# print("Remainder tape (third tape): ", m.tapes[2])  

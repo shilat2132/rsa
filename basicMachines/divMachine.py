@@ -32,8 +32,13 @@ class divMachine(Tm):
             ("div", "1", "_", "_"): {"newState": "back", "write": ["1", "_", "1"], "movement": ['S', 'L', 'R']},
             ("div", "_", "_", "_"): {"newState": "back", "write": ["_", "_", "1"], "movement": ['S', 'L', 'R']},
 
-            # div -> acc
-            ("div", "_", "1", "_"): {"newState": "acc", "write": ["_", "1", "_"], "movement": ['S', 'S', 'S']},
+            # div -> checkMinus
+            ("div", "_", "1", "_"): {"newState": "checkMinus", "write": ["_", "1", "_"], "movement": ['S', 'S', 'L']},
+
+            # checkMinus -> acc: if the division is 0 but we already put '-' in the result tape
+            ("checkMinus", "_", "1", "_"): {"newState": "acc", "write": ["_", "1", "_"], "movement": ['S', 'S', 'S']},
+            ("checkMinus", "_", "1", "-"): {"newState": "acc", "write": ["_", "1", "_"], "movement": ['S', 'S', 'S']},
+            ("checkMinus", "_", "1", "1"): {"newState": "acc", "write": ["_", "1", "1"], "movement": ['S', 'S', 'S']},
 
             # div -> div
             ("div", "1", "1", "_"): {"newState": "div", "write": ["1", "1", "_"], "movement": ['R', 'R', 'S']},
