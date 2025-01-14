@@ -13,8 +13,8 @@ b = ["1" for i in range(26)]
 
 
 # binary
-bin = binary(a)
-print(f"the binary number: {bin}")
+# bin = binary(a)
+# print(f"the binary number: {bin}")
 
 # remainder
 # m = remainderMachine([a, b])
@@ -24,11 +24,11 @@ print(f"the binary number: {bin}")
 
 # Euclid
 
-# eu = Euclid([a, b])
-# eu.runEuclidAbstract()
-# print("the result of d: {d}".format(d= eu.d()))
-# print("the result of t: {t}".format(t= eu.t()))
-# print("the result of s: {s}".format(s= eu.s()))
+eu = Euclid([a, b])
+eu.runEuclidAbstract()
+print("the result of d: {d}".format(d= eu.d()))
+print("the result of t: {t}".format(t= eu.t()))
+print("the result of s: {s}".format(s= eu.s()))
 
 
 # phi
