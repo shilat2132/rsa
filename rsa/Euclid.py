@@ -40,8 +40,8 @@ class Euclid(Tm):
 
     
     def runEuclidAbstract(self):
-        self.runMachine("computeQ") #assigns the initializes values of the euclid algorithm
-        self.currentState = "computeQ"
+        self.step() #assigns the initializes values of the euclid algorithm
+        
         while self.currentState != "acc":
             # currentState= computeQ
             qMachine = divMachine([self.tapes[self.tapesDict["r(i-1)"]], self.tapes[self.tapesDict["r(i)"]]]) #q = r(i-1) // r(i)
