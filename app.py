@@ -3,11 +3,8 @@ from basicMachines.divMachine import divMachine
 from rsa.phi import phiN
 from basicMachines.subMachine import subMachine
 from tm import Tm
-from basicMachines.remainderMachine import remainderMachine
+from basicMachines.remainderMachine import remainderPQ
 from rsa.Euclid import Euclid
-from rsa.encryption.binaryMachine import binary
-from basicMachines.powerMachine import powerMachine
-from utils import unaryToDecimal
 
 a = ["1" for i in range(7)]
 b = ["1" for i in range(3)]
@@ -36,6 +33,8 @@ b = ["1" for i in range(3)]
 # print(f"the result of s: {eu.s()}. the number in this tape is: {unaryToDecimal(eu.s())}")
 # print(f"the result of t: {eu.t()}. the number in this tape is: {unaryToDecimal(eu.t())}")
 
+# a.insert(0, "-")
+# b.insert(0, "-")
 
 # phi
 # result = []
@@ -47,6 +46,9 @@ b = ["1" for i in range(3)]
 # config =  d.runMachine()
 # print("the machine of division: {d}".format(d=d))
 
+# copy
+# Tm.copyTape(a, b)
+# print(a, b)
 
 # sub
 # config = subMachine(a, b)
