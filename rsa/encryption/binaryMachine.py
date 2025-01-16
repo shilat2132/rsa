@@ -2,7 +2,7 @@ from tm import Tm
 def binary(a: list):
     """
     this function accepts a tape of a number(a) with unary base and creates a tape of the binary representation
-        * returns the tape of the binary representation
+    returns: a tuple of the tape of the binary representation and the configuration
     """
     deltaTable = {
 
@@ -29,5 +29,5 @@ def binary(a: list):
     }
 
     tapes = [a, []]
-    Tm.staticRunMachine(tapes, "even", deltaTable)
-    return tapes[1]
+    state, config = Tm.staticRunMachine(tapes, "even", deltaTable)
+    return tapes[1], config

@@ -3,6 +3,7 @@ from tm import Tm
 def subMachine(a: list[str], b: list[str]):
     """
     gets a and b in 2 different tapes in unary base and store the subtraction in the first tape
+    returns: the configuration
     """
 
     """
@@ -80,4 +81,5 @@ def subMachine(a: list[str], b: list[str]):
 
     }
 
-    Tm.staticRunMachine([a, b], "start", deltaTable)
+    state, config = Tm.staticRunMachine([a, b], "start", deltaTable)
+    return config

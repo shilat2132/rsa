@@ -20,9 +20,13 @@ class Tm:
             
 
         """
-        self.tapes = [['_', '_'] if len(tape) == 0 else tape for tape in tapes]
+        
+        for i, t in enumerate(tapes):
+            if len(t) == 0:
+                tapes[i].append('_')
 
-       
+        self.tapes = tapes
+
        # if we got less tapes than the number of tapes in the machine, we initialize the missing tapes
         if len(tapes) < numOfTapes:
             for i in range(numOfTapes - len(tapes)):
@@ -97,11 +101,13 @@ class Tm:
     @staticmethod
     def config(tapes: list[list], currentState, pos):
             """
-            for each tape (i) prints a string of "uq sigma v", where:
+            for each tape (i) presents a string of "uq sigma v", where:
                 - u= the left side of the head of tape i
                 - q = current state
                 - sigma = the symbol in the head of tape i
                 - v= the right side of the head in tape i
+            
+                returns: the string of the configuration
             """
             q = currentState
             config = "configuration: \n"
@@ -109,38 +115,37 @@ class Tm:
                 p = pos[i]
                 u, sigma, v = t[:p], t[p], t[p+1:]
                 config += f"tape {i}: {u} & {q} & {sigma} & {v}  \n"
-            print(config)
+            return config
 
     @staticmethod
     def staticRunMachine(tapes: list[list], currentState, deltaTable: dict, pos: list[int] = None, acc= "acc", rej= "rej") -> str:
         """
         Static method to run the Turing machine based on the delta table.
-            - prints starting configuration and a configuration after each step of the macine
-            - returns the last state
+        returns: a tuple of the last state and configuration for this run
         """
         
         # for empty tapes - initiates with spaces
         for i, t in enumerate(tapes):
             if len(t) == 0:
-                tapes[i] = ['_', '_']
+                tapes[i].append('_')
 
         if not pos:
             pos = [getHeadIndex(t) for t in tapes]
 
        
-        print("starting configuration:")
-        Tm.config(tapes, currentState, pos)
+        config = Tm.config(tapes, currentState, pos) + "\n"
         
         while currentState != acc and currentState != rej:
             currentState = Tm.staticStep(tapes, currentState, deltaTable, pos)
-            Tm.config(tapes, currentState, pos)
+            config+=Tm.config(tapes, currentState, pos) + "\n"
         
-        return currentState
+        return currentState, config
 
     @staticmethod
     def emptyTape(t: list[str]):
         """
         given a tape of the machine, erase all characters different from '_'
+        returns: the configuration
         """
 
         deltaTable= {
@@ -149,14 +154,15 @@ class Tm:
             ("delete", "_") : {"newState": "acc", "write": ["_"], "movement": ['S']},
         }
 
-        Tm.staticRunMachine([t], "delete", deltaTable)
-
+        currentState, config =  Tm.staticRunMachine([t], "delete", deltaTable)
+        return config
 
 
     @staticmethod
     def copyTape(a: list[str], b:list[str]):
         """
         given 2 tapes in a machine - copy tape a to tape b
+        returns: the configuration string
         """
 
         deltaTable = {
@@ -178,8 +184,8 @@ class Tm:
             ("deleteRest", "_", "_") : {"newState": "acc", "write": ["_", "_"], "movement": ['S', "S"]},
         }
 
-        Tm.staticRunMachine([a, b], "copy", deltaTable)
-
+        currentState, config =  Tm.staticRunMachine([a, b], "copy", deltaTable)
+        return config
 
 
     # instance methods
@@ -192,9 +198,10 @@ class Tm:
     def runMachine(self):
         """
         Wrapper instance method that calls the static `staticRunMachine` method.
+        returns: the configuration
         """
-        self.currentState = Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.pos)
-
+        self.currentState, config = Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.pos)
+        return config
     
    
 

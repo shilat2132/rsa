@@ -5,12 +5,12 @@ from basicMachines.mulMachine import mulMachine
 def powerMachine(x: list, y: list):
     """
     a function for the machine x in the power of y
-    returns: the tape of x in the power of y
+    returns: a tuple of (the tape of x in the power of y, the configuration)
     """
     tapes = [x, y, []]
     for i, t in enumerate(tapes):
         if len(t) == 0:
-            tapes[i] = ['_', '_']
+            tapes[i].append("_")
 
     
     pos = [getHeadIndex(t) for t in tapes]
@@ -31,7 +31,7 @@ def powerMachine(x: list, y: list):
 
     currentState = "start"
     # starting configuration
-    Tm.config(tapes, currentState, pos)
+    config = Tm.config(tapes, currentState, pos) +"\n"
 
     # running the machine
     while currentState !="acc":
@@ -39,13 +39,13 @@ def powerMachine(x: list, y: list):
             t2 = tapes[2].copy() #assign it to a new variable so we can send it as 2 tapes to the mulMachine
             Tm.emptyTape(tapes[2])
             m = mulMachine([tapes[0], t2, tapes[2]])
-            m.runMachine()
+            config += m.runMachine()
             pos[2] = getHeadIndex(tapes[2])
         
         currentState = Tm.staticStep(tapes, currentState, deltaTable, pos)
-        Tm.config(tapes, currentState, pos)
+        config+= Tm.config(tapes, currentState, pos)
     
-    return tapes[2]
+    return tapes[2], config
 
 
    
