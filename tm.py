@@ -1,5 +1,5 @@
 
-from utils import getHeadIndex
+from utils import getHeadIndex, unaryToDecimal
 
 class Tm:
     """
@@ -9,18 +9,19 @@ class Tm:
     def __init__(self, tapes: list[list[any]], states: set, currentState: str, deltaTable: dict, numOfTapes=1, acc="acc", rej="rej"):
         """
         a constructor for a turing machine
+            params:
             - tapes: 2 dimensional list, where each element is a tape represented by a list
-            - states: a set of the states of the machine
             - currentState: the state that the machine is currently on, initializes with the starting state.
             - deltaTabel: a dictonary of the transitions. each key is a tuple (currentState, the symbols in the head of each tape) 
                 and the value is a dict of the new state, what to write and the movement
-            - numOfTapes: the number of tapes in the machine, defaulted to 1 tape
+            
+            other fields:
             - pos: a list of the position of each tape
-            - acc: the name of the accepting state, defaulted to acc
-            - rej: the name of the rejecting state, defaulted to rej
+            
 
         """
-        self.tapes = [['_', '_'] + tape + ['_', '_'] for tape in tapes]
+        self.tapes = [['_', '_'] if len(tape) == 0 else tape for tape in tapes]
+
        
        # if we got less tapes than the number of tapes in the machine, we initialize the missing tapes
         if len(tapes) < numOfTapes:
@@ -37,20 +38,16 @@ class Tm:
             # if there's no character like that
         self.pos = [getHeadIndex(t) for t in self.tapes]
 
+
     @staticmethod
-    def staticRunMachine(tapes: list[list[any]], currentState: str, deltaTable: dict, stopingState = None, acc= "acc", rej= "rej", pos: list[int] = None):
+    def staticStep(tapes: list[list], currentState, deltaTable, pos):
         """
-        Static method to run the Turing machine based on the delta table.
-        Includes internal methods `config`, `ensureBoundarySpace`, and `move`.
+        a static method to simulate one step in the machine
+            - internal method that adds spaces at the beginning or end of a tape if needed
+
+            returns:
+            the new current state 
         """
-        
-        for i, t in enumerate(tapes):
-            if len(t) == 0:
-                tapes[i] = ['_', '_'] + t + ['_', '_']
-
-        if not pos:
-            pos = [getHeadIndex(t) for t in tapes]
-
 
         def ensureBoundarySpace(tapeIndex: int, position: int):
             """
@@ -69,7 +66,36 @@ class Tm:
                 tapes[tapeIndex].append("_")
                 pos[tapeIndex] = tapeLength
 
-        def config():
+        # create the symbols
+        symbols = [t[pos[i]] for i, t in enumerate(tapes)]
+
+        # create the input for the delta table and extract the transition from the table
+        deltaInput = (currentState,) + tuple(symbols)
+        if deltaInput not in deltaTable:
+            raise KeyError(f"the key {deltaInput} is not in the delta table")
+            
+        deltaOutput = deltaTable[deltaInput]
+        newState, write, movements = deltaOutput["newState"], deltaOutput["write"], deltaOutput["movement"]
+
+        # simulate writing in the tapes
+        for i, t in enumerate(tapes):
+                t[pos[i]] = write[i]
+
+        # simulate moving according to the movement list
+    
+        for i, m in enumerate(movements):
+            if m == 'R':
+                pos[i] += 1
+                ensureBoundarySpace(i, pos[i])
+            elif m == 'L':
+                pos[i] -= 1
+                ensureBoundarySpace(i, pos[i])
+
+        # return the new current state
+        return newState
+
+    @staticmethod
+    def config(tapes: list[list], currentState, pos):
             """
             for each tape (i) prints a string of "uq sigma v", where:
                 - u= the left side of the head of tape i
@@ -85,42 +111,31 @@ class Tm:
                 config += f"tape {i}: {u} & {q} & {sigma} & {v}  \n"
             print(config)
 
-        def move(symbols: list):
-            """
-            Performs the movement and update the tapes based on the delta table.
-                - symbols: the list of the characters in the head of each tape
-            """
-            nonlocal currentState
-            deltaInput = (currentState,) + tuple(symbols)
-            if deltaInput not in deltaTable:
-                raise KeyError(f"the key {deltaInput} is not in the delta table")
-            
-            deltaOutput = deltaTable[deltaInput]
-            newState, write, movements = deltaOutput["newState"], deltaOutput["write"], deltaOutput["movement"]
-
-            # Write symbols to the tapes
-            for i, t in enumerate(tapes):
-                t[pos[i]] = write[i]
-
-            # Move heads according to the movement list
-            for i, m in enumerate(movements):
-                if m == 'R':
-                    pos[i] += 1
-                    ensureBoundarySpace(i, pos[i])
-                elif m == 'L':
-                    pos[i] -= 1
-                    ensureBoundarySpace(i, pos[i])
-
-            currentState = newState
-
-        # back to the runMachine method. 
-        print("starting configuration:")
-        config()
+    @staticmethod
+    def staticRunMachine(tapes: list[list], currentState, deltaTable: dict, pos: list[int] = None, acc= "acc", rej= "rej") -> str:
+        """
+        Static method to run the Turing machine based on the delta table.
+            - prints starting configuration and a configuration after each step of the macine
+            - returns the last state
+        """
         
-        while currentState != acc and currentState != rej and currentState!= stopingState:
-            symbols = [t[pos[i]] for i, t in enumerate(tapes)]
-            move(symbols)
-            config()
+        # for empty tapes - initiates with spaces
+        for i, t in enumerate(tapes):
+            if len(t) == 0:
+                tapes[i] = ['_', '_']
+
+        if not pos:
+            pos = [getHeadIndex(t) for t in tapes]
+
+       
+        print("starting configuration:")
+        Tm.config(tapes, currentState, pos)
+        
+        while currentState != acc and currentState != rej:
+            currentState = Tm.staticStep(tapes, currentState, deltaTable, pos)
+            Tm.config(tapes, currentState, pos)
+        
+        return currentState
 
     @staticmethod
     def emptyTape(t: list[str]):
@@ -167,11 +182,18 @@ class Tm:
 
 
 
-    def runMachine(self, stopingState = None):
+    # instance methods
+    def step(self):
+        """
+        Wrapper instance method that calls the static `staticStep` method.
+        """
+        self.currentState = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
+    
+    def runMachine(self):
         """
         Wrapper instance method that calls the static `staticRunMachine` method.
         """
-        Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, stopingState, self.acc, self.rej, self.pos)
+        self.currentState = Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.pos)
 
     
    
@@ -182,9 +204,7 @@ class Tm:
         """
         machine = ""
         for t in self.tapes:
-            i = getHeadIndex(t)
-            num = t.count('1')
-            if t[i] == "-":
-                num = -1*num
+            num = unaryToDecimal(t)
             machine += str(t) + ", the number in this tape: " + str(num) + "\n"
         return machine
+

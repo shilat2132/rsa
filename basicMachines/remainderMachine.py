@@ -3,10 +3,11 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from basicMachines.subMachine import subMachine
 from tm import Tm
 
 
-class remainderPQ(Tm):
+class remainderMachine(Tm):
 
 
     def __init__(self, tapes):
@@ -18,6 +19,11 @@ class remainderPQ(Tm):
             # start -> acc
             ("start", "_", "_", "_"): {"newState": "acc", "write": ["_", "_", "_"], "movement": ['S', 'S', 'S']},
             ("start", "1", "_", "_"): {"newState": "acc", "write": ["1", "_", "_"], "movement": ['S', 'S', 'S']},
+            # start
+            ("start", "1", "1", "_"): {"newState": "start", "write": ['X', "1", '_'], "movement": ['R', 'R', 'S']},
+            ("start", "1", "_", "_"): {"newState": "q1", "write": ["1", "_", "_"], "movement": ['L', 'L', 'S']},
+            ("start", "_", "_", "_"): {"newState": "acc", "write": ["_", "_", "_"], "movement": ['S', 'S', 'S']},
+            ("start", "_", "1", "_"): {"newState": "q2", "write": ["_", "1", "_"], "movement": ['L', 'S', 'S']},
 
             # start -> q1
             ("start", "1", "1", "_"): {"newState": "q1", "write": ["1*", "1", "_"], "movement": ['R', 'R', 'S']},
@@ -52,4 +58,25 @@ class remainderPQ(Tm):
         }
 
 
-        super().__init__(tapes, states, "start", deltaTable, 3)    
+        super().__init__(tapes, states, "start", deltaTable, 3) 
+
+    def runMachine(self):
+        """
+        Handles the tapes: removes negative sign from the first tape if present
+        and performs the remainder calculation.
+        """
+    
+
+        if self.tapes[0][self.pos[0]] == "-":
+            self.pos[0]+=1
+
+            super().runMachine() #a%b
+            subMachine(self.tapes[1] , self.tapes[2])
+            Tm.copyTape(self.tapes[1], self.tapes[2])
+        
+        else:
+            super().runMachine() #a%b
+
+    
+
+        

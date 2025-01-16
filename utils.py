@@ -10,3 +10,15 @@ def getHeadIndex(tape: list)-> int:
             head=i
             break
     return head
+
+def unaryToDecimal(t) -> int:
+    """
+    gets a tape from a machine with a number in unary base and returns the decimal number.
+    """
+    
+    if '0' in t: return 0
+    num = t.count('1')
+    i = getHeadIndex(t)
+    if t[i] == "-":
+        num = -1*num
+    return num
