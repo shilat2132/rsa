@@ -79,10 +79,12 @@ class Tm:
             raise KeyError(f"the key {deltaInput} is not in the delta table")
             
         deltaOutput = deltaTable[deltaInput]
-        newState, write, movements = deltaOutput["newState"], deltaOutput["write"], deltaOutput["movement"]
+        write = deltaOutput["write"] if "write" in deltaOutput else None
+        newState, movements = deltaOutput["newState"], deltaOutput["movement"]
 
         # simulate writing in the tapes
-        for i, t in enumerate(tapes):
+        if write is not None:
+            for i, t in enumerate(tapes):
                 t[pos[i]] = write[i]
 
         # simulate moving according to the movement list
@@ -191,7 +193,8 @@ class Tm:
     # instance methods
     def step(self):
         """
-        Wrapper instance method that calls the static `staticStep` method.
+            Wrapper instance method that calls the static `staticStep` method.
+            - updates the currentState after the transition
         """
         self.currentState = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
     

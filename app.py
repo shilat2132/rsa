@@ -3,12 +3,14 @@ from basicMachines.divMachine import divMachine
 from rsa.phi import phiN
 from basicMachines.subMachine import subMachine
 from tm import Tm
-from basicMachines.remainderMachine import remainderPQ
+from basicMachines.remainderMachine import remainderMachine
 from rsa.Euclid import Euclid
+from rsa.squere.binaryMachine import binary
 
-a = ["1" for i in range(7)]
+a = ["1" for i in range(5)]
 b = ["1" for i in range(3)]
 # a.insert(0, "-")
+
 
 
 # power

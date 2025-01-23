@@ -1,6 +1,6 @@
 # regular function for encryption - no TM
 
-def E(x, b, n):
+def sq(x, b, n):
     """
     simulates the squere method of x^b mod n
     """
@@ -39,7 +39,7 @@ def E(x, b, n):
 
 
 
-y = E(2468, 47, 24257)
+y = sq(2468, 47, 24257)
 # y = E(1228, 31, 1517)
 
 print(str(y))
