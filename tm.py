@@ -207,6 +207,17 @@ class Tm:
         return config
     
    
+    def trim_ones(t):
+        # Find the last index where "1" appears
+        try:
+            last_one_index = len(t) - 1 - t[::-1].index("1")
+            # Slice the list up to the last "1"
+            t[:] = t[:last_one_index + 1]
+        except ValueError:
+            # If "1" is not in the list, return an empty list
+            return
+
+
 
     def __repr__(self):
         """
