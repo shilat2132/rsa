@@ -19,7 +19,45 @@ class SquereM(Tm):
             # q0 -> q0
             ("q0", "1", "0", "1", "_", "_") : {"newState": "q0",  "movement": ['S', 'R', 'S', 'S', 'S']},
             ("q0", "1", "1", "1", "_", "_") : {"newState": "q0",  "movement": ['S', 'R', 'S', 'S', 'S']},
+
+            # q0 -> initY
+            ("q0", "1", "_", "1", "_", "_") : {"newState": "initY",  "movement": ['S', 'L', 'S', 'S', 'S']},
+
+            # initY -> remainderO 
+            ("initY", "1", "1", "1", "_", "_") : {"newState": "remainderO",  "movement": ['S', 'L', 'S', 'S', 'S']},
+
+            # initY -> initM
+            ("initY", "1", "0", "1", "_", "_") : {"newState": "initM", "write": ["1", "0", "1" , '_', '1'], "movement": ['S', 'L', 'S', 'S', 'S']}, 
+
+             # remainderO -> initM
+             
+
+            # initM -> acc  
+            ("initM", "1", "_", "1", "_", "1") : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
+
+            # initM -> copyM
+            ("initM", "1", "0", "1", "_", "1") : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("initM", "1", "1", "1", "_", "1") : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
+
+            # copyM -> loop
+
+
+            # loop -> checkCond
+            ("loop", "1", "0", "1", "1", "1") : {"newState": "checkCond",  "movement": ['S', 'L', 'S', 'S', 'S']}, 
+
+            # loop -> npdateY
+            ("loop", "1", "1", "1", "1", "1") : {"newState": "checkCond",  "movement": ['S', 'L', 'S', 'S', 'S']},
+
+            # checkCond -> loop
+            ("checkCond", "1", "0", "1", "1", "1") : {"newState": "loop",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("checkCond", "1", "1", "1", "1", "1") : {"newState": "loop",  "movement": ['S', 'S', 'S', 'S', 'S']},
+
+            #npdateY -> checkCond
+
+
+
         }
+
         states = {"bin", "q0", "initY", "remainder0", "initM", "copyM", "loop", "updateY", "checkCond"}
         super().__init__(tapes, states, "bin", deltaTable, 5)
 
