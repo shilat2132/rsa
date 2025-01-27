@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import sys
 import os
 
@@ -12,11 +13,16 @@ class remainderMachine(Tm):
 
 
 =======
+=======
+>>>>>>> Stashed changes
 from basicMachines import subMachine
 from tm import Tm
 
 
 class remainderPQ(Tm):
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     def __init__(self, tapes):
         states = {"start", "q1", "back", "remainder"}
@@ -62,6 +68,7 @@ class remainderPQ(Tm):
         }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         t1 = tapes[0].copy() #ensure that there isn't any changes to the original tape
         tapes = [t1] + tapes[1:]
         super().__init__(tapes, states, "start", deltaTable, 3) 
@@ -90,6 +97,8 @@ class remainderPQ(Tm):
 
         
 =======
+=======
+>>>>>>> Stashed changes
         super().__init__(tapes, states, "start", deltaTable, 3)
 
     def run(self, tapes=None):
@@ -116,5 +125,9 @@ class remainderPQ(Tm):
             subMachine(tapes_subtraction[0], tapes_subtraction[1])
             return tapes_subtraction[2]
         else:
+<<<<<<< Updated upstream
+            return new_tapes[2]
+>>>>>>> Stashed changes
+=======
             return new_tapes[2]
 >>>>>>> Stashed changes
