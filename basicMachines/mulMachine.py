@@ -50,7 +50,7 @@ class mulMachine(Tm):
         }
 
 
-        if len(tapes)== 3:  # Ensure there are at least 3 tapes
+        if len(tapes)== 3:  # Ensure there are 3 tapes
             tapes[2].clear()
         super().__init__(tapes, states, "start", deltaTable, 3)
 

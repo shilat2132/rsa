@@ -66,9 +66,9 @@ class SquereM(Tm):
     
     def runMachine(self):
         # self.tapes = [x, b, n, m, y]
-
+        i=0
         while self.currentState != "acc":
-            i =0
+            
             if self.currentState == "bin":
                 b1, config = binary(self.tapes[1]) #b1 = bin(b)
                 self.tapes[1] = b1

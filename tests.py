@@ -8,15 +8,42 @@ from rsa.Euclid import Euclid
 from rsa.squere.binaryMachine import binary
 from rsa.squere.square import SquereM
 
-a = ["1" for i in range(5)]
-b = ["1" for i in range(6)]
+from basicMachines.binaryOperations.addBinary import AddBinary
+from basicMachines.binaryOperations.mulBinary import MulBinary
+
+# a = "1100101"
+# a = list(a)
+# b = "1100101"
+# b = list(b)
+
+
+
+# a = ["1" for i in range(500)]
+a = bin(1228)[2:]
+a = list(a)
+# b = ["1" for i in range(101)]
+# a = binary(a)
+
+# mul binary
+mulBinaryMachine = MulBinary([a, a.copy()])
+mulBinaryMachine.runMachine()
+print(mulBinaryMachine.tapes[2])
+
+# add binary
+# addBinMachine = AddBinary([a, b])
+# addBinMachine.runMachine()
+# print(addBinMachine)
+
+
+# a = ["1" for i in range(5)]
+# b = ["1" for i in range(6)]
 # a.insert(0, "-")
 
-x = ["1" for i in range(101)]
-n = ["1" for i in range(34)]
-squareMachine = SquereM([x, b, n])
-squareMachine.runMachine()
-result = squareMachine.result()
+# x = ["1" for i in range(101)]
+# n = ["1" for i in range(34)]
+# squareMachine = SquereM([x, b, n])
+# squareMachine.runMachine()
+# result = squareMachine.result()
 
 # power
 # pow, config = powerMachine(a, b)
