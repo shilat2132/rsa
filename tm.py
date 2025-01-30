@@ -6,7 +6,7 @@ class Tm:
     A class for general Turing machine
     """
 
-    def __init__(self, tapes: list[list[any]], states: set, currentState: str, deltaTable: dict, numOfTapes=1, acc="acc", rej="rej"):
+    def __init__(self, tapes: list[list[any]], states: set, currentState: str, deltaTable: dict, numOfTapes=1, pos = None, acc="acc", rej="rej"):
         """
         a constructor for a turing machine
             params:
@@ -40,7 +40,10 @@ class Tm:
         
         # initialize position of the head in each tape to be the first character that's different from "_" or the first one 
             # if there's no character like that
-        self.pos = [getHeadIndex(t) for t in self.tapes]
+        if pos==None:
+            self.pos = [getHeadIndex(t) for t in self.tapes]
+        else:
+            self.pos = pos
 
 
     @staticmethod
@@ -207,6 +210,17 @@ class Tm:
         return config
     
    
+    def trim_ones(t):
+        # Find the last index where "1" appears
+        try:
+            last_one_index = len(t) - 1 - t[::-1].index("1")
+            # Slice the list up to the last "1"
+            t[:] = t[:last_one_index + 1]
+        except ValueError:
+            # If "1" is not in the list, return an empty list
+            return
+
+
 
     def __repr__(self):
         """

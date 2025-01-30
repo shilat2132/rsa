@@ -78,6 +78,8 @@ class remainderPQ(Tm):
 <<<<<<< Updated upstream
         t1 = tapes[0].copy() #ensure that there isn't any changes to the original tape
         tapes = [t1] + tapes[1:]
+        if len(tapes)== 3:  # Ensure there are at least 3 tapes
+            tapes[2].clear()
         super().__init__(tapes, states, "start", deltaTable, 3) 
 
     def runMachine(self):

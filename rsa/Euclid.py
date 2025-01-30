@@ -16,6 +16,8 @@ class Euclid(Tm):
             - tapes: a list with a and b of the gcd -> gcd(a,b)
             
         """
+        tapes[0] = tapes[0].copy()
+        tapes[1] = tapes[1].copy()
         states = {"start", "computeQ", "r", "s", "t", "emptyQ"}
         deltaTable = {
             ("start", "1", "1", "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": ["1", "1", "1", "_", "_", "1", "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},

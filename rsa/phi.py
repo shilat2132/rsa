@@ -11,7 +11,8 @@ def phiN(tapes):
     returns: the configuration
 """
 
-
+    tapes[0] = tapes[0].copy()
+    tapes[1] = tapes[1].copy()
     # create the delta table for subtracting 1 from each tape
     deltaTable = {
         ("start", "1", "1", "_"): {"newState": "acc", "write": ["_", "_", "_"], "movement": ["S", "S", "S"] },
