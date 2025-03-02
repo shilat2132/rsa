@@ -1,0 +1,97 @@
+from tm2 import Tm
+from .subtraction import Subtraction
+from utils2 import getHeadIndex, getLastCharIndex
+
+class Division(Tm):
+    """
+    a machine to get the integer part of the division of a /b and the remainder with the long division method
+    """
+
+    def __init__(self, tapes):
+
+        deltaTable = {
+
+            # initM -> initM
+            ("initM", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            ("initM", 0, 1, "_", "_", "_") : {"newState": "initM", "write": [0, 1, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            ("initM", 1, 0, "_", "_", "_") : {"newState": "initM", "write": [1, 0, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            ("initM", 1, 1, "_", "_", "_") : {"newState": "initM", "write": [1, 1, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+
+
+            # initM -> sub
+            ("initM", 0, "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
+            ("initM", 1, "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
+            ("initM", "_", "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
+
+            # sub -> check
+            # if the subtraction is negative, write 0 in the d tape
+            ("sub", 0, "_", "_", "-", "_") : {"newState": "check", "write": [ 0, "_", "_", "-", 0] , "movement": ['S', "S", "S", "S", "R"]},
+            ("sub", 1, "_", "_", "-", "_") : {"newState": "check", "write": [ 1, "_", "_", "-", 0] , "movement": ['S', "S", "S", "S", "R"]},
+            ("sub", "_", "_", "_", "-", "_") : {"newState": "check", "write": [ "_", "_", "_", "-", 0] , "movement": ['S', "S", "S", "S", "R"]},
+
+            # sub -> copyR
+            # if the subtraction is non-negative, write 1 in the d tape
+            ("sub", 0, "_", "_", 0, "_") : {"newState": "copyR", "write": [ 0, "_", "_", 0, 1] , "movement": ['S', "S", "S", "S", "R"]},
+            ("sub", 1, "_", "_", 0, "_") : {"newState": "copyR", "write": [ 1, "_", "_", 0, 1] , "movement": ['S', "S", "S", "S", "R"]},
+            ("sub", "_", "_", "_", 0, "_") : {"newState": "copyR", "write": [ "_", "_", "_", 0, 1] , "movement": ['S', "S", "S", "S", "R"]},
+
+            ("sub", 0, "_", "_", 1, "_") : {"newState": "copyR", "write": [ 0, "_", "_", 1, 1] , "movement": ['S', "S", "S", "S", "R"]},
+            ("sub", 1, "_", "_", 1, "_") : {"newState": "copyR", "write": [ 1, "_", "_", 1, 1] , "movement": ['S', "S", "S", "S", "R"]},
+            ("sub", "_", "_", "_", 1, "_") : {"newState": "copyR", "write": [ "_", "_", "_", 1, 1] , "movement": ['S', "S", "S", "S", "R"]},
+
+
+            # copyR -> check
+            ("copyR", 0, "_", 0, 0, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", 1, "_", 0, 0, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", "_", "_", 0, 0, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+
+            ("copyR", 0, "_", 0, 1, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", 1, "_", 0, 1, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", "_", "_", 0, 1, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+
+            ("copyR", 0, "_", 1, 0, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", 1, "_", 1, 0, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", "_", "_", 1, 0, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+
+            ("copyR", 0, "_", 1, 1, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", 1, "_", 1, 1, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+            ("copyR", "_", "_", 1, 1, "_") : {"newState": "check" , "movement": ['S', "S", "R", "S", "S"]},
+
+
+            # check -> acc
+            ("check", "_", "_", "_", "_", "_") : {"newState": "acc" , "movement": ['S', "S", "S", "S", "S"]},
+
+            # check -> aDown
+            ("check", 0, "_", "_", "_", "_") : {"newState": "aDown" , "movement": ['S', "S", "S", "S", "S"]},
+            ("check", 1, "_", "_", "_", "_") : {"newState": "aDown" , "movement": ['S', "S", "S", "S", "S"]},
+
+            # aDown -> sub
+            # copies a digit from a to m
+            ("aDown", 0, "_", "_", "_", "_") : {"newState": "sub", "write": [ 0, "_", 0, "_", "_"] , "movement": ['R', "S", "R", "S", "S"]},
+            ("aDown", 1, "_", "_", "_", "_") : {"newState": "sub", "write": [ 1, "_", 1, "_", "_"] , "movement": ['R', "S", "R", "S", "S"]},
+
+        }
+
+        super().__init__(tapes, "initM", deltaTable, 5)
+
+
+    # [0: a, 1: b, 2: m, 3: r, 4: d]
+    def runMachine(self):
+       
+       while self.currentState != self.acc:
+            if self.currentState == "sub":
+               Subtraction([self.tapes[2], self.tapes[1], self.tapes[3]]).runMachine() # r = m -b
+               self.pos[3] = getHeadIndex(self.tapes[3]) #set the position of the r tape
+               self.step()
+            
+            elif self.currentState == "check":
+                Tm.emptyTape(self.tapes[3]) #clear the tape of r
+                self.step()
+
+            elif self.currentState == "copyR":
+                Tm.copyTape(self.tapes[3], self.tapes[2]) #m = r
+                self.pos[2] = getLastCharIndex(self.tapes[2]) #set the position of the m tape
+                self.step()
+
+            else:
+                self.step()

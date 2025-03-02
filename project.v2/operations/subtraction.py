@@ -1,5 +1,5 @@
-from tm import Tm
-from utils import getHeadIndex
+from tm2 import Tm
+from utils2 import getHeadIndex
 from .complement import complement
 from .addition import Addition
 
@@ -15,18 +15,11 @@ class Subtraction(Tm):
     """
 
     def __init__(self, tapes):
-       
-        pos = [getHeadIndex(t) for t in tapes]
-        if len(tapes) == 2:
-            pos.append(0)
-            tapes.append(["_"])
+
         
         t1, t2 = tapes[0].copy(), tapes[1].copy()
         tapes = [t1, t2] + tapes[2:]
         
-        states = {"s", "case1", "zeros", "comp1", "add1", "carry", "compResult", "erase", "endC",
-                  "add2", "addMinus", "add3", "minus"
-                  }
 
         deltaTable ={
             # CASE 1: a,b>0
@@ -134,12 +127,12 @@ class Subtraction(Tm):
 
        
 
-        super().__init__(tapes, states, "s", deltaTable, 3, pos)
+        super().__init__(tapes, "s", deltaTable, 3)
 
 
     
     def runMachine(self):
-        while self.currentState != "acc":
+        while self.currentState != self.acc:
             if self.currentState == "comp1":
                 complement(self.tapes[1]) #converts b to its two's complement
                 self.currentState = "add1"
@@ -157,12 +150,12 @@ class Subtraction(Tm):
             elif self.currentState == "compResult":
                 complement(self.tapes[2])
                 self.pos[2] = getHeadIndex(self.tapes[2])
-                self.currentState = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
+                self.step()
 
             elif self.currentState == "add2":
                 Addition(self.tapes).runMachine() #c = a+b
                 self.pos[2] = getHeadIndex(self.tapes[2])
-                self.currentState = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
+                self.step()
             
             elif self.currentState == "add3":
                 Addition(self.tapes).runMachine() #c = a+b
@@ -175,5 +168,5 @@ class Subtraction(Tm):
 
 
             else:
-                self.currentState = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
+                self.step()
                 

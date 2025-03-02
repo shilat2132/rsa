@@ -1,12 +1,12 @@
 
-from utils import getHeadIndex, binaryToDecimal, getLastCharIndex
+from utils2 import getHeadIndex, binaryToDecimal
 
 class Tm:
     """
     A class for general Turing machine
     """
 
-    def __init__(self, tapes: list[list[any]], states: set, currentState: str, deltaTable: dict, numOfTapes=1, pos = None, acc="acc", rej="rej"):
+    def __init__(self, tapes: list[list[any]], currentState: str, deltaTable: dict, numOfTapes=1, pos = None, acc="acc", rej="rej"):
         """
         a constructor for a turing machine
             params:
@@ -32,16 +32,16 @@ class Tm:
             for i in range(numOfTapes - len(tapes)):
                 self.tapes.append(["_", "_"])
         
-        self.states = states
+        
         self.deltaTable = deltaTable
         self.currentState = currentState
         self.numOfTapes = numOfTapes
         self.acc, self.rej = acc, rej
         
-        # initialize position of the head in each tape to be the last character that's different from "_" or the last one 
+        # initialize position of the head in each tape to be the first character that's different from "_" or the last one 
             # if there's no character like that
         if pos==None:
-            self.pos = [getLastCharIndex(t) for t in self.tapes]
+            self.pos = [getHeadIndex(t) for t in self.tapes]
         else:
             self.pos = pos
 

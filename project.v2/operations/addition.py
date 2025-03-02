@@ -1,9 +1,9 @@
-from tm import Tm
+from tm2 import Tm
+from utils2 import getLastCharIndex
 
 class Addition(Tm):
 
     def __init__(self, tapes):
-        states ={"q0", "qCarry"}
 
         deltaTable ={
             # q0 -> acc
@@ -41,12 +41,12 @@ class Addition(Tm):
             ("qCarry", "_", 0, "_") : {"newState": "q0", "write": ["_", 0, 1], "movement": ['S', 'L', 'L']},
         }
 
-        # pos = []
-        # i1, i2 = getLastCharIndex(tapes[0]), getLastCharIndex(tapes[1]) #start from the lsb of the numbers
-        # pos.append(i1)
-        # pos.append(i2)
-        # pos.append(0)
+        pos = []
+        i1, i2 = getLastCharIndex(tapes[0]), getLastCharIndex(tapes[1]) #start from the lsb of the numbers
+        pos.append(i1)
+        pos.append(i2)
+        pos.append(0)
 
         if len(tapes)== 3:  # Ensure there are 3 tapes
             tapes[2].clear()
-        super().__init__(tapes, states, "q0", deltaTable, 3)
+        super().__init__(tapes, "q0", deltaTable, 3, pos)

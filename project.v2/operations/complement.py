@@ -1,5 +1,5 @@
-from tm import Tm
-from utils import getLastCharIndex
+from tm2 import Tm
+from utils2 import getHeadIndex
 from .addition import Addition
 
 def complement(a: list):
@@ -8,12 +8,12 @@ def complement(a: list):
     """
 
     deltaTable = {
-         ("xor", 1) : {"newState": "xor", "write": [0], "movement": ['L']},
-         ("xor", 0) : {"newState": "xor", "write": [1], "movement": ['L']},
+         ("xor", 1) : {"newState": "xor", "write": [0], "movement": ['R']},
+         ("xor", 0) : {"newState": "xor", "write": [1], "movement": ['R']},
          ("xor", "_") : {"newState": "add", "movement": ['S']},
     }
 
-    pos = [getLastCharIndex(a)]
+    pos = [getHeadIndex(a)]
     currentState = "xor"
 
     while currentState != "acc":

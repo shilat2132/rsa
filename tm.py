@@ -6,7 +6,7 @@ class Tm:
     A class for general Turing machine
     """
 
-    def __init__(self, tapes: list[list[any]], states: set, currentState: str, deltaTable: dict, numOfTapes=1, pos = None, acc="acc", rej="rej"):
+    def __init__(self, tapes: list[list[any]], currentState: str, deltaTable: dict, numOfTapes=1, pos = None, acc="acc", rej="rej"):
         """
         a constructor for a turing machine
             params:

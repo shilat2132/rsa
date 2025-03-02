@@ -32,6 +32,7 @@ def binaryToDecimal(t) -> int:
     end = getLastCharIndex(t)  
 
     is_negative = t[start] == "-"
+    if t[start] == "_": return 0
     numberTape = t[start+1:end+1] if is_negative else t[start:end+1]
 
     binary = "".join(map(str, numberTape)) 
