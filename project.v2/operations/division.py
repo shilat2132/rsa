@@ -10,6 +10,16 @@ class Division(Tm):
     def __init__(self, tapes):
 
         deltaTable = {
+            #start -> addMinus
+            ("start", "-", 0, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 0, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
+            ("start", "-", 1, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 1, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
+           
+
+            # start -> initM
+            ("start", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            ("start", 0, 1, "_", "_", "_") : {"newState": "initM", "write": [0, 1, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            ("start", 1, 0, "_", "_", "_") : {"newState": "initM", "write": [1, 0, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            ("start", 1, 1, "_", "_", "_") : {"newState": "initM", "write": [1, 1, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
 
             # initM -> initM
             ("initM", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
@@ -21,7 +31,16 @@ class Division(Tm):
             # initM -> sub
             ("initM", 0, "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
             ("initM", 1, "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
+            ("initM", "_", 0, "_", "_", "_") : {"newState": "endB" , "movement": ['S', "R", "S", "S", "S"]},
+            ("initM", "_", 1, "_", "_", "_") : {"newState": "emdB" , "movement": ['S', "R", "S", "S", "S"]},
             ("initM", "_", "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
+
+            # endB -> endB
+            ("endB", "_", 0, "_", "_", "_") : {"newState": "endB" , "movement": ['S', "R", "S", "S", "S"]},
+            ("endB", "_", 1, "_", "_", "_") : {"newState": "emdB" , "movement": ['S', "R", "S", "S", "S"]},
+
+            # endB -> sub
+            ("endB", "_", "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
 
             # sub -> check
             # if the subtraction is negative, write 0 in the d tape
@@ -72,7 +91,7 @@ class Division(Tm):
 
         }
 
-        super().__init__(tapes, "initM", deltaTable, 5)
+        super().__init__(tapes, "start", deltaTable, 5)
 
 
     # [0: a, 1: b, 2: m, 3: r, 4: d]
@@ -92,6 +111,13 @@ class Division(Tm):
                 Tm.copyTape(self.tapes[3], self.tapes[2]) #m = r
                 self.pos[2] = getLastCharIndex(self.tapes[2]) #set the position of the m tape
                 self.step()
+
+            elif self.currentState == "addMinus":
+                self.currentState = "start"
+                self.runMachine()
+                # m = b - a%b = b -m
+                Subtraction([self.tapes[1], self.tapes[2],  self.tapes[2]]).runMachine()
+                break
 
             else:
                 self.step()

@@ -19,6 +19,8 @@ class Subtraction(Tm):
         
         t1, t2 = tapes[0].copy(), tapes[1].copy()
         tapes = [t1, t2] + tapes[2:]
+        if len(tapes)== 3:  # Ensure there are 3 tapes
+            tapes[2].clear()
         
 
         deltaTable ={

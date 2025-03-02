@@ -4,13 +4,13 @@ from operations.complement import complement
 from operations.subtraction import Subtraction
 from operations.division import Division
 
-a = bin(4)[2:]
+a = bin(20)[2:]
 a = list(a)
 a = [int(c) for c in a]
-# a.insert(0, "-")
+a.insert(0, "-")
 
 
-b = bin(3)[2:]
+b = bin(16)[2:]
 b = list(b)
 b = [int(c) for c in b]
 # b.insert(0, "-")
@@ -22,9 +22,9 @@ b = [int(c) for c in b]
 # print(addMachine)
 
 # mul
-mulMacine = Multiplication([a, b])
-mulMacine.runMachine()
-print(mulMacine)
+# mulMacine = Multiplication([a, b])
+# mulMacine.runMachine()
+# print(mulMacine)
 
 # complement
 # complement(a)
