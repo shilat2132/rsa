@@ -5,7 +5,10 @@ from .addition import Addition
 class Multiplication(Tm):
 
     def __init__(self, tapes):
-
+        """
+        c = a*b
+        * creates copies of a and b, and clears c in which the final result would be
+        """
         t1, t2 = tapes[0].copy(), tapes[1].copy()
         tapes = [t1, t2] + tapes[2:]
         if len(tapes)== 3:  # Ensure there are 3 tapes

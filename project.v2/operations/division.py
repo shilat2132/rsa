@@ -9,6 +9,10 @@ class Division(Tm):
 
     def __init__(self, tapes):
 
+        # clears m, r, d if they are given
+        if len(tapes) >2:
+            for t in range(2, len(tapes)):
+                tapes[t].clear()
         deltaTable = {
             #start -> addMinus
             ("start", "-", 0, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 0, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
@@ -32,12 +36,12 @@ class Division(Tm):
             ("initM", 0, "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
             ("initM", 1, "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
             ("initM", "_", 0, "_", "_", "_") : {"newState": "endB" , "movement": ['S', "R", "S", "S", "S"]},
-            ("initM", "_", 1, "_", "_", "_") : {"newState": "emdB" , "movement": ['S', "R", "S", "S", "S"]},
+            ("initM", "_", 1, "_", "_", "_") : {"newState": "endB" , "movement": ['S', "R", "S", "S", "S"]},
             ("initM", "_", "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
 
             # endB -> endB
             ("endB", "_", 0, "_", "_", "_") : {"newState": "endB" , "movement": ['S', "R", "S", "S", "S"]},
-            ("endB", "_", 1, "_", "_", "_") : {"newState": "emdB" , "movement": ['S', "R", "S", "S", "S"]},
+            ("endB", "_", 1, "_", "_", "_") : {"newState": "endB" , "movement": ['S', "R", "S", "S", "S"]},
 
             # endB -> sub
             ("endB", "_", "_", "_", "_", "_") : {"newState": "sub" , "movement": ['S', "S", "S", "S", "S"]},
@@ -96,7 +100,10 @@ class Division(Tm):
 
     # [0: a, 1: b, 2: m, 3: r, 4: d]
     def runMachine(self):
-       
+       """
+       * tapes[2] = a%b
+       * tapes[4] = a//b
+       """
        while self.currentState != self.acc:
             if self.currentState == "sub":
                Subtraction([self.tapes[2], self.tapes[1], self.tapes[3]]).runMachine() # r = m -b
