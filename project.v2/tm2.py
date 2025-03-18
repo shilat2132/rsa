@@ -152,7 +152,7 @@ class Tm:
         given a tape of the machine, erase all characters different from '_'
         returns: the configuration
         """
-
+        
         deltaTable= {
             ("delete", 1) : {"newState": "delete", "write": ["_"], "movement": ['R']},
             ("delete", 0) : {"newState": "delete", "write": ["_"], "movement": ['R']},

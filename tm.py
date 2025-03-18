@@ -32,7 +32,6 @@ class Tm:
             for i in range(numOfTapes - len(tapes)):
                 self.tapes.append(["_", "_", "_", "_"])
         
-        self.states = states
         self.deltaTable = deltaTable
         self.currentState = currentState
         self.numOfTapes = numOfTapes
