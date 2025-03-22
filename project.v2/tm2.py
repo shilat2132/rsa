@@ -1,5 +1,5 @@
 
-from utils import getHeadIndex, unaryToDecimal
+from utils2 import getHeadIndex, binaryToDecimal
 
 class Tm:
     """
@@ -30,14 +30,15 @@ class Tm:
        # if we got less tapes than the number of tapes in the machine, we initialize the missing tapes
         if len(tapes) < numOfTapes:
             for i in range(numOfTapes - len(tapes)):
-                self.tapes.append(["_", "_", "_", "_"])
+                self.tapes.append(["_", "_"])
+        
         
         self.deltaTable = deltaTable
         self.currentState = currentState
         self.numOfTapes = numOfTapes
         self.acc, self.rej = acc, rej
         
-        # initialize position of the head in each tape to be the first character that's different from "_" or the first one 
+        # initialize position of the head in each tape to be the first character that's different from "_" or the last one 
             # if there's no character like that
         if pos==None:
             self.pos = [getHeadIndex(t) for t in self.tapes]
@@ -46,7 +47,7 @@ class Tm:
 
 
     @staticmethod
-    def staticStep(tapes: list[list], currentState, deltaTable, pos)-> str:
+    def staticStep(tapes: list[list], currentState, deltaTable, pos):
         """
         a static method to simulate one step in the machine
             - internal method that adds spaces at the beginning or end of a tape if needed
@@ -57,7 +58,7 @@ class Tm:
 
         def ensureBoundarySpace(tapeIndex: int, position: int):
             """
-        adds spaces before or after input if neccessary, and sets the position to the correct place
+        adds spaces befre or after input if neccessary, and sets the position to the correct place
 
         params:
             - tapeIndex: the index of the tape in the tapes' list
@@ -151,9 +152,10 @@ class Tm:
         given a tape of the machine, erase all characters different from '_'
         returns: the configuration
         """
-
+        
         deltaTable= {
-            ("delete", "1") : {"newState": "delete", "write": ["_"], "movement": ['R']},
+            ("delete", 1) : {"newState": "delete", "write": ["_"], "movement": ['R']},
+            ("delete", 0) : {"newState": "delete", "write": ["_"], "movement": ['R']},
             ("delete", "-") : {"newState": "delete", "write": ["_"], "movement": ['R']},
             ("delete", "_") : {"newState": "acc", "write": ["_"], "movement": ['S']},
         }
@@ -170,20 +172,29 @@ class Tm:
         """
 
         deltaTable = {
-            ("copy", "1", "1") : {"newState": "copy", "write": ["1", "1"], "movement": ['R', "R"]},
-            ("copy", "1", "-") : {"newState": "copy", "write": ["1", "1"], "movement": ['R', "R"]},
-            ("copy", "1", "_") : {"newState": "copy", "write": ["1", "1"], "movement": ['R', "R"]},
+            ("copy", 1, 1) : {"newState": "copy", "write": [1, 1], "movement": ['R', "R"]},
+            ("copy", 1, 0) : {"newState": "copy", "write": [1, 1], "movement": ['R', "R"]},
+            ("copy", 1, "-") : {"newState": "copy", "write": [1, 1], "movement": ['R', "R"]},
+            ("copy", 1, "_") : {"newState": "copy", "write": [1, 1], "movement": ['R', "R"]},
 
-            ("copy", "-", "1") : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
+            ("copy", 0, 1) : {"newState": "copy", "write": [0, 0], "movement": ['R', "R"]},
+            ("copy", 0, 0) : {"newState": "copy", "write": [0, 0], "movement": ['R', "R"]},
+            ("copy", 0, "-") : {"newState": "copy", "write": [0, 0], "movement": ['R', "R"]},
+            ("copy", 0, "_") : {"newState": "copy", "write": [0, 0], "movement": ['R', "R"]},
+
+            ("copy", "-", 1) : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
+            ("copy", "-", 0) : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
             ("copy", "-", "-") : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
             ("copy", "-", "_") : {"newState": "copy", "write": ["-", "-"], "movement": ['R', "R"]},
 
             ("copy", "_", "_") : {"newState": "acc", "write": ["_", "_"], "movement": ['S', "S"]},
 
-            ("copy", "_", "1") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("copy", "_", 1) : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("copy", "_", 0) : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
             ("copy", "_", "-") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
 
-            ("deleteRest", "_", "1") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("deleteRest", "_", 1) : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
+            ("deleteRest", "_", 0) : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
             ("deleteRest", "_", "-") : {"newState": "deleteRest", "write": ["_", "_"], "movement": ['S', "R"]},
             ("deleteRest", "_", "_") : {"newState": "acc", "write": ["_", "_"], "movement": ['S', "S"]},
         }
@@ -210,13 +221,13 @@ class Tm:
     
    
     def trim_ones(t):
-        # Find the last index where "1" appears
+        # Find the last index where 1 appears
         try:
-            last_one_index = len(t) - 1 - t[::-1].index("1")
-            # Slice the list up to the last "1"
+            last_one_index = len(t) - 1 - t[::-1].index(1)
+            # Slice the list up to the last 1
             t[:] = t[:last_one_index + 1]
         except ValueError:
-            # If "1" is not in the list, return an empty list
+            # If 1 is not in the list, return an empty list
             return
 
 
@@ -227,7 +238,7 @@ class Tm:
         """
         machine = ""
         for t in self.tapes:
-            num = unaryToDecimal(t)
+            num = binaryToDecimal(t)
             machine += str(t) + ", the number in this tape: " + str(num) + "\n"
         return machine
 

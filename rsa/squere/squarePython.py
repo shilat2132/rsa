@@ -2,7 +2,7 @@
 
 def sq(x, b, n):
     """
-    simulates the squere method of x^b mod n
+    simulates the method of squares of x^b mod n
     """
     binary = bin(b)
     binary = binary[2:] #to remove the '0b' from the beginning
