@@ -59,8 +59,7 @@ class SquereM(Tm):
 
         }
 
-        states = {"bin", "q0", "initY", "remainder0", "initM", "copyM", "loop", "updateY", "checkCond"}
-        super().__init__(tapes, states, "bin", deltaTable, 5)
+        super().__init__(tapes, "bin", deltaTable, 5)
 
 
     

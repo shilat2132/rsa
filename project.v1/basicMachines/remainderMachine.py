@@ -1,7 +1,4 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
+
 import sys
 import os
 
@@ -14,30 +11,7 @@ from tm import Tm
 class remainderMachine(Tm):
 
 
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-from basicMachines import subMachine
-from tm import Tm
-
-
-class remainderPQ(Tm):
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     def __init__(self, tapes):
-        states = {"start", "q1", "back", "remainder"}
 
         deltaTable = {
             # start -> acc
@@ -79,15 +53,12 @@ class remainderPQ(Tm):
             ("remainder", "1*", "1", "_"): {"newState": "acc", "write": ["1*", "1", "1"], "movement": ['S', 'S', 'S']}
         }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
+
         t1 = tapes[0].copy() #ensure that there isn't any changes to the original tape
         tapes = [t1] + tapes[1:]
         if len(tapes)== 3:  # Ensure there are at least 3 tapes
             tapes[2].clear()
-        super().__init__(tapes, states, "start", deltaTable, 3) 
+        super().__init__(tapes, "start", deltaTable, 3) 
 
     def runMachine(self):
         """
@@ -112,15 +83,6 @@ class remainderPQ(Tm):
     
 
         
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-        super().__init__(tapes, states, "start", deltaTable, 3)
-
     def run(self, tapes=None):
         if tapes is None:
             tapes = self.tapes
@@ -145,17 +107,5 @@ class remainderPQ(Tm):
             subMachine(tapes_subtraction[0], tapes_subtraction[1])
             return tapes_subtraction[2]
         else:
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
             return new_tapes[2]
->>>>>>> Stashed changes
-=======
-            return new_tapes[2]
->>>>>>> Stashed changes
-=======
-            return new_tapes[2]
->>>>>>> Stashed changes
-=======
-            return new_tapes[2]
->>>>>>> Stashed changes
+

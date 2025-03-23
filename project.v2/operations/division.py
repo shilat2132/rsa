@@ -8,6 +8,12 @@ class Division(Tm):
     """
 
     def __init__(self, tapes):
+        """
+            tapes = [a, b, m, r, d]
+            * tapes a and b are required, all the others are optional.
+            * m = a%b, d = a//b
+
+        """
 
         # clears m, r, d if they are given
         if len(tapes) >2:
@@ -20,9 +26,14 @@ class Division(Tm):
            
 
             # start -> initM
-            ("start", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
-            ("start", 0, 1, "_", "_", "_") : {"newState": "initM", "write": [0, 1, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
-            ("start", 1, 0, "_", "_", "_") : {"newState": "initM", "write": [1, 0, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            # need to start from the first 1 digit, not 0
+            ("start", 0, 0, "_", "_", "_") : {"newState": "start" , "movement": ['R', "R", "S", "S", "S"]},
+            ("start", 0, 1, "_", "_", "_") : {"newState": "start" , "movement": ['R', "S", "S", "S", "S"]},
+            ("start", 1, 0, "_", "_", "_") : {"newState": "start" , "movement": ['S', "R", "S", "S", "S"]},
+
+            # ("start", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            # ("start", 0, 1, "_", "_", "_") : {"newState": "initM", "write": [0, 1, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
+            # ("start", 1, 0, "_", "_", "_") : {"newState": "initM", "write": [1, 0, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
             ("start", 1, 1, "_", "_", "_") : {"newState": "initM", "write": [1, 1, 1, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
 
             # initM -> initM
@@ -97,14 +108,15 @@ class Division(Tm):
 
         super().__init__(tapes, "start", deltaTable, 5)
 
+  
 
     # [0: a, 1: b, 2: m, 3: r, 4: d]
     def runMachine(self):
-       """
-       * tapes[2] = a%b
-       * tapes[4] = a//b
-       """
-       while self.currentState != self.acc:
+        """
+        * tapes[2] = a%b
+        * tapes[4] = a//b
+        """
+        while self.currentState != self.acc:
             if self.currentState == "sub":
                Subtraction([self.tapes[2], self.tapes[1], self.tapes[3]]).runMachine() # r = m -b
                self.pos[3] = getHeadIndex(self.tapes[3]) #set the position of the r tape
@@ -128,3 +140,15 @@ class Division(Tm):
 
             else:
                 self.step()
+        
+        self.checkZero(4)
+
+
+        
+        # [0: a, 1: b, 2: m, 3: r, 4: d]
+    def getRemainderTape(self):
+        return self.tapes[2]
+    
+    def getQuotient(self):
+        return self.tapes[4]
+

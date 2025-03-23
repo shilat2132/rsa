@@ -6,9 +6,10 @@ from operations.division import Division
 from methods.squere import Squere
 from RSA import RSA
 
-from utils2 import binaryToDecimal
 from methods.phi import phiN
 
+from methods.euclidis import Euclid
+from utils2 import binaryToDecimal
 
 
 def decimalToBinaryList(num, minus = False):
@@ -31,8 +32,24 @@ print(r)
 
 # print(binaryToDecimal(phi))
 
-# a = decimalToBinaryList(20)
-# b = decimalToBinaryList(16)
+a = decimalToBinaryList(13, True)
+b = decimalToBinaryList(26)
+
+# div and remainder
+# divMachine = Division([a, b])
+# divMachine.runMachine()
+# print(divMachine)
+
+# subtraction
+# subMachine = Subtraction([a, b])
+# subMachine.runMachine()
+# print(subMachine)
+
+# e = Euclid([a, b])
+# e.runMachine()
+# print(f"gcd =  {binaryToDecimal(e.d())}")
+# print(f"s = {binaryToDecimal(e.s())}")
+# print(f"t =  {binaryToDecimal(e.t())}")
 
 
 # add
@@ -41,6 +58,9 @@ print(r)
 # print(addMachine)
 
 # mul
+# a = decimalToBinaryList(13)
+# b = decimalToBinaryList(2, True)
+
 # mulMacine = Multiplication([a, b])
 # mulMacine.runMachine()
 # print(mulMacine)
@@ -49,16 +69,10 @@ print(r)
 # complement(a)
 # print(a)
 
-# subtraction
-# subMachine = Subtraction([a, b])
-# subMachine.runMachine()
-# print(subMachine)
 
 
-# div and remainder
-# divMachine = Division([a, b])
-# divMachine.runMachine()
-# print(divMachine)
+
+
 
 
 # squere
