@@ -18,12 +18,11 @@ class Euclid(Tm):
         """
         tapes[0] = tapes[0].copy()
         tapes[1] = tapes[1].copy()
-        states = {"start", "computeQ", "r", "s", "t", "emptyQ"}
         deltaTable = {
             ("start", "1", "1", "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": ["1", "1", "1", "_", "_", "1", "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
             ("start", "-", "1", "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": ["-", "1", "1", "_", "_", "1", "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]}
         }
-        super().__init__(tapes, states, "start", deltaTable, 8)
+        super().__init__(tapes, "start", deltaTable, 8)
         self.tapesDict= {
             "r(i-1)": 0,
             "r(i)": 1,

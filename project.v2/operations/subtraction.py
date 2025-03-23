@@ -1,21 +1,24 @@
+from itertools import product
 from tm2 import Tm
 from utils2 import getHeadIndex
 from .complement import complement
 from .addition import Addition
 
 class Subtraction(Tm):
-    """
-    a class for a machine that computes a-b and addresses all the cases:
-        * a,b >0
-        * a, b <0
-        * a>0, b<0
-        * a<0, b>0
-    
-        the heads of tapes are in the left side of the numbers
-    """
+   
 
     def __init__(self, tapes):
+        """
+            a class for a machine that computes a-b and addresses all the cases:
+                * a,b >0
+                * a, b <0
+                * a>0, b<0
+                * a<0, b>0
+            
+                the heads of tapes are in the left side of the numbers
 
+                the first 2 tapes are copied
+        """
         
         t1, t2 = tapes[0].copy(), tapes[1].copy()
         tapes = [t1, t2] + tapes[2:]
@@ -24,6 +27,17 @@ class Subtraction(Tm):
         
 
         deltaTable ={
+            ("s", 0, "_", "_") : {"newState": "copyA", "movement": ['S', "S", "S"]},
+            ("s", 1, "_", "_") : {"newState": "copyA", "movement": ['S', "S", "S"]},
+
+            ("s", "_", 0, "_") : {"newState": "copyB", "movement": ['S', "L", "S"]},
+            ("s", "_", 1, "_") : {"newState": "copyB", "movement": ['S', "L", "S"]},
+
+             ("goLeft", "_", "_", 0) : {"newState": "addMinus", "movement": ['S', "S", "L"]},
+            ("goLeft", "_", "_", 1) : {"newState": "addMinus", "movement": ['S', "S", "L"]},
+
+           
+
             # CASE 1: a,b>0
             # s-> case1
             ("s", 0, 0, "_") : {"newState": "case1", "movement": ['R', "R", "S"]},
@@ -60,16 +74,17 @@ class Subtraction(Tm):
             ("zeros", "_", 1, "_") : {"newState": "zeros", "write": [0, 1, "_"] , "movement": ['L', "L", "S"]},
 
             # zeros -> comp1
-            ("zeros", "_", "_", "_") : {"newState": "comp1" , "movement": ['S', "R", "S"]},
+            ("zeros", "_", "_", "_") : {"newState": "comp1" , "movement": ['R', "S", "S"]},
 
 
             # carry -> carry
-            ("carry", "_", 0, 0) : {"newState": "carry", "movement": ['S', "R", "R"]},
-            ("carry", "_", 0, 1) : {"newState": "carry", "movement": ['S', "R", "R"]},
-            ("carry", "_", 1, 0) : {"newState": "carry", "movement": ['S', "R", "R"]},
-            ("carry", "_", 1, 1) : {"newState": "carry", "movement": ['S', "R", "R"]},
+            ("carry", 0, "_", 0) : {"newState": "carry", "movement": ['R', "S", "R"]},
+            ("carry", 0, "_", 1) : {"newState": "carry", "movement": ['R', "S", "R"]},
+            ("carry", 1, "_", 0) : {"newState": "carry", "movement": ['R', "S", "R"]},
+            ("carry", 1, "_", 1) : {"newState": "carry", "movement": ['R', "S", "R"]},
+           
 
-            # carry->endC : if c is longer than b' there is a carry and we need to erase it
+            # carry->endC : if c is longer than a there is a carry and we need to erase it
              ("carry", "_", "_", 0) : {"newState": "endC", "movement": ['S', "S", "L"]},
              ("carry", "_", "_", 1) : {"newState": "endC", "movement": ['S', "S", "L"]},
 
@@ -127,9 +142,16 @@ class Subtraction(Tm):
         }
 
 
+        # for combo in product([0, 1], repeat=3):  
+        #     # ("goLeft", 0, 0, 0) : {"newState": "addMinus", "movement": ['L', "L", "L"]},
+        #     deltaTable[("goLeft", *combo)] = {
+        #         "newState": "addMinus",
+        #         "movement": ['L', 'L', 'L']
+        #     }
        
 
         super().__init__(tapes, "s", deltaTable, 3)
+
 
 
     
@@ -144,7 +166,9 @@ class Subtraction(Tm):
                 addMachine = Addition(self.tapes)
                 addMachine.runMachine() # c = a + b' (b' is the two's complement of b)
                 self.pos[2] = getHeadIndex(self.tapes[2]) #updates the position of tape c
-                # at this point b' and c tapes are both positioned at the beginning of the numbers
+                # at this point a and c tapes are both positioned at the beginning of the numbers. 
+                # in the carry's state we would want to compare their lengths
+
 
                 self.currentState = "carry"
 
@@ -167,7 +191,14 @@ class Subtraction(Tm):
                 Subtraction([self.tapes[1], self.tapes[0], self.tapes[2]]).runMachine() # c = b - a 
                 self.currentState = "acc"
 
+            elif self.currentState == "copyA":
+                Tm.copyTape(self.tapes[0], self.tapes[2]) #copy a to the result when it's a-0
+                self.currentState = "acc"
 
+            elif self.currentState == "copyB":
+                Tm.copyTape(self.tapes[1], self.tapes[2]) #copy b to the result and add - in the end in case of 0-b
+                self.pos[2] = getHeadIndex(self.tapes[2])
+                self.currentState = "goLeft"
 
             else:
                 self.step()

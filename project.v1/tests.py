@@ -7,9 +7,9 @@ from basicMachines.remainderMachine import remainderMachine
 from rsa.Euclid import Euclid
 from rsa.squere.binaryMachine import binary
 from rsa.squere.square import SquereM
+from utils import unaryToDecimal
 
-from basicMachines.binaryOperations.addBinary import AddBinary
-from basicMachines.binaryOperations.mulBinary import MulBinary
+
 
 # a = "1100101"
 # a = list(a)
@@ -19,15 +19,15 @@ from basicMachines.binaryOperations.mulBinary import MulBinary
 
 
 # a = ["1" for i in range(500)]
-a = bin(1228)[2:]
-a = list(a)
+# a = bin(1228)[2:]
+# a = list(a)
 # b = ["1" for i in range(101)]
 # a = binary(a)
 
 # mul binary
-mulBinaryMachine = MulBinary([a, a.copy()])
-mulBinaryMachine.runMachine()
-print(mulBinaryMachine.tapes[2])
+# mulBinaryMachine = MulBinary([a, a.copy()])
+# mulBinaryMachine.runMachine()
+# print(mulBinaryMachine.tapes[2])
 
 # add binary
 # addBinMachine = AddBinary([a, b])
@@ -35,8 +35,8 @@ print(mulBinaryMachine.tapes[2])
 # print(addBinMachine)
 
 
-# a = ["1" for i in range(5)]
-# b = ["1" for i in range(6)]
+a = ["1" for i in range(240)]
+b = ["1" for i in range(46)]
 # a.insert(0, "-")
 
 # x = ["1" for i in range(101)]
@@ -61,11 +61,11 @@ print(mulBinaryMachine.tapes[2])
 
 # Euclid
 
-# eu = Euclid([a, b])
-# config = eu.runEuclidAbstract()
-# print(f"the result of d: {eu.d()}. the number in this tape is: {unaryToDecimal(eu.d())}")
-# print(f"the result of s: {eu.s()}. the number in this tape is: {unaryToDecimal(eu.s())}")
-# print(f"the result of t: {eu.t()}. the number in this tape is: {unaryToDecimal(eu.t())}")
+eu = Euclid([a, b])
+config = eu.runEuclidAbstract()
+print(f"gcd =  {unaryToDecimal(eu.d())}")
+print(f"s = {unaryToDecimal(eu.s())}")
+print(f"t =  {unaryToDecimal(eu.t())}")
 
 # a.insert(0, "-")
 # b.insert(0, "-")

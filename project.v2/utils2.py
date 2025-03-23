@@ -11,6 +11,33 @@ def getHeadIndex(tape: list)-> int:
             break
     return head
 
+
+# def getHeadIndex(tape: list)-> int:
+#     """
+#     given a tape (list), return the index of the first character that's different from "_".
+#         - if all characters are "_", returns 0 (the first index)
+#     """
+#     l = len(tape)
+#     head=0
+#     hasOne = False
+#     foundZero = False
+
+#     for i in range(l):
+#         # position the head on the first character cause all of the 0 or _ don't matter
+#         if tape[i]== 1: 
+#             hasOne = True
+#             head=i
+#             break
+#         if tape[i] == 0 and not foundZero:
+#             foundZero = True
+#             head = i #if there are only _ and 0s, it would set the head to the first 0, and later cut all the following charaters if there are any (to prevent a case of 0 0 0 0 ...)
+    
+#     if(not hasOne):
+#         # if there aren't any 1s and the head is on either 0 or _ , cut all the following characters from where the head is positioned
+#         tape = tape[:head+1]
+       
+#     return head
+
 def getLastCharIndex(tape: list)-> int:
     """
     given a tape (list), return the index of the last character that's different from "_".
@@ -39,3 +66,17 @@ def binaryToDecimal(t) -> int:
     decimal = int(binary, 2)
 
     return -decimal if is_negative else decimal
+
+
+
+def isZero(tape: list):
+    """
+     given a tape of a machine, checks if the number appearing in it is zero
+        returns: true if it is zero, false otherwise
+    """
+
+    for t in tape:
+        if t == 1:
+            return False
+        
+    return True

@@ -12,7 +12,6 @@ class remainderMachine(Tm):
 
     def __init__(self, tapes):
 
-        states = {"start", "q1", "back", "remainder"}
 
 
         deltaTable = {
@@ -63,7 +62,7 @@ class remainderMachine(Tm):
         tapes = [t1] + tapes[1:]
         if len(tapes)== 3:  # Ensure there are at least 3 tapes
             tapes[2].clear()
-        super().__init__(tapes, states, "start", deltaTable, 3) 
+        super().__init__(tapes, "start", deltaTable, 3) 
 
     def runMachine(self):
         """
