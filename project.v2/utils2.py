@@ -11,7 +11,7 @@ def getHeadIndex(tape: list)-> int:
             break
     return head
 
-def getLastChar(tape: list)-> int:
+def getLastCharIndex(tape: list)-> int:
     """
     given a tape (list), return the index of the last character that's different from "_".
         - if all characters are "_", returns the last index
@@ -23,14 +23,19 @@ def getLastChar(tape: list)-> int:
         k-=1
     return n
 
-def unaryToDecimal(t) -> int:
+def binaryToDecimal(t) -> int:
     """
-    gets a tape from a machine with a number in unary base and returns the decimal number.
+    gets a tape from a machine with a number in binary base and returns the decimal number.
     """
     
-    if '0' in t: return 0
-    num = t.count('1')
-    i = getHeadIndex(t)
-    if t[i] == "-":
-        num = -1*num
-    return num
+    start = getHeadIndex(t)
+    end = getLastCharIndex(t)  
+
+    is_negative = t[start] == "-"
+    if t[start] == "_": return 0
+    numberTape = t[start+1:end+1] if is_negative else t[start:end+1]
+
+    binary = "".join(map(str, numberTape)) 
+    decimal = int(binary, 2)
+
+    return -decimal if is_negative else decimal

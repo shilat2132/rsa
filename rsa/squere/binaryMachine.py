@@ -1,9 +1,11 @@
 from tm import Tm
 def binary(a: list):
     """
-        this function accepts a tape of a number(a) with unary base and creates a tape of the binary representation
-            - the function makes a copy of a and soesn't change the original list
-        returns: a tuple of the tape of the binary representation and the configuration
+    this function accepts a tape of a number(a) with unary base and creates a tape of the binary representation
+        - the function makes a copy of a and soesn't change the original list
+        
+    returns: 
+        - the tape of the binary representation 
     """
     deltaTable = {
 
@@ -31,4 +33,4 @@ def binary(a: list):
 
     tapes = [a.copy(), []]
     state, config = Tm.staticRunMachine(tapes, "even", deltaTable)
-    return tapes[1], config
+    return tapes[1]
