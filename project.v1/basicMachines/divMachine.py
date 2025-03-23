@@ -10,7 +10,6 @@ class divMachine(Tm):
         """
             initiates the division tm fields and builds its delta table
         """
-        states = {"start", "div", "back"}
         
         deltaTable = {
             # start -> div
@@ -59,7 +58,7 @@ class divMachine(Tm):
         }
 
 
-        super().__init__(tapes, states, "start", deltaTable, 3)
+        super().__init__(tapes, "start", deltaTable, 3)
     
     def resultTape(self):
         return self.tapes[2]

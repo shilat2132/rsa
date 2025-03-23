@@ -4,6 +4,8 @@ from operations.complement import complement
 from operations.subtraction import Subtraction
 from operations.division import Division
 from methods.squere import Squere
+from methods.euclidis import Euclid
+from utils2 import binaryToDecimal
 
 
 def decimalToBinaryList(num, minus = False):
@@ -16,8 +18,24 @@ def decimalToBinaryList(num, minus = False):
     return a
 
 
-# a = decimalToBinaryList(20)
-# b = decimalToBinaryList(16)
+a = decimalToBinaryList(1234)
+b = decimalToBinaryList(567)
+
+# div and remainder
+# divMachine = Division([a, b])
+# divMachine.runMachine()
+# print(divMachine)
+
+# subtraction
+# subMachine = Subtraction([a, b])
+# subMachine.runMachine()
+# print(subMachine)
+
+# e = Euclid([a, b])
+# e.runMachine()
+# print(f"gcd =  {binaryToDecimal(e.d())}")
+# print(f"s = {binaryToDecimal(e.s())}")
+# print(f"t =  {binaryToDecimal(e.t())}")
 
 
 # add
@@ -34,23 +52,17 @@ def decimalToBinaryList(num, minus = False):
 # complement(a)
 # print(a)
 
-# subtraction
-# subMachine = Subtraction([a, b])
-# subMachine.runMachine()
-# print(subMachine)
 
 
-# div and remainder
-# divMachine = Division([a, b])
-# divMachine.runMachine()
-# print(divMachine)
+
+
 
 
 # squere
-x = decimalToBinaryList(6789)
-b = decimalToBinaryList(34)
-n = decimalToBinaryList(54321)
+# x = decimalToBinaryList(6789)
+# b = decimalToBinaryList(34)
+# n = decimalToBinaryList(54321)
 
-squereMachine = Squere([x, b, n])
-squereMachine.runMachine()
-print(squereMachine)
+# squereMachine = Squere([x, b, n])
+# squereMachine.runMachine()
+# print(squereMachine)

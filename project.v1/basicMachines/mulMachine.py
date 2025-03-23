@@ -9,7 +9,6 @@ class mulMachine(Tm):
         """
             initiates the multiplication tm fields and builds its delta table
         """
-        states = {"start", "q1", "back"}
         
         deltaTable = {
 
@@ -52,7 +51,7 @@ class mulMachine(Tm):
 
         if len(tapes)== 3:  # Ensure there are 3 tapes
             tapes[2].clear()
-        super().__init__(tapes, states, "start", deltaTable, 3)
+        super().__init__(tapes, "start", deltaTable, 3)
 
     def result(self):
         return self.tapes[2]
