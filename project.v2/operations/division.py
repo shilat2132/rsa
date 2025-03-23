@@ -112,11 +112,11 @@ class Division(Tm):
 
     # [0: a, 1: b, 2: m, 3: r, 4: d]
     def runMachine(self):
-       """
-       * tapes[2] = a%b
-       * tapes[4] = a//b
-       """
-       while self.currentState != self.acc:
+        """
+        * tapes[2] = a%b
+        * tapes[4] = a//b
+        """
+        while self.currentState != self.acc:
             if self.currentState == "sub":
                Subtraction([self.tapes[2], self.tapes[1], self.tapes[3]]).runMachine() # r = m -b
                self.pos[3] = getHeadIndex(self.tapes[3]) #set the position of the r tape
@@ -140,6 +140,8 @@ class Division(Tm):
 
             else:
                 self.step()
+        
+        self.checkZero(4)
 
 
         

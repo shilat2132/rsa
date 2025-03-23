@@ -45,6 +45,20 @@ class Tm:
         else:
             self.pos = pos
 
+    def checkZero(self, tapeIndex):
+        """ 
+        a method for checking whether the number in the tape (usually result tape) 
+        is 0, 0000...0, or versions of that with '-' in order to replace it with a tape of only one "_"
+        """
+        for t in self.tapes[tapeIndex]:
+            if t == 1:
+                return
+        
+        self.tapes[tapeIndex] = ["_"]
+      
+
+    
+        
 
     @staticmethod
     def staticStep(tapes: list[list], currentState, deltaTable, pos):
@@ -121,6 +135,9 @@ class Tm:
                 u, sigma, v = t[:p], t[p], t[p+1:]
                 config += f"tape {i}: {u} & {q} & {sigma} & {v}  \n"
             return config
+
+
+    
 
     @staticmethod
     def staticRunMachine(tapes: list[list], currentState, deltaTable: dict, pos: list[int] = None, acc= "acc", rej= "rej") -> str:

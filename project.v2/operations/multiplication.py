@@ -1,3 +1,4 @@
+from itertools import product
 from tm2 import Tm
 from utils2 import getHeadIndex
 from .addition import Addition
@@ -10,22 +11,26 @@ class Multiplication(Tm):
         * creates copies of a and b, and clears c in which the final result would be
         """
         t1, t2 = tapes[0].copy(), tapes[1].copy()
+        
         tapes = [t1, t2] + tapes[2:]
         if len(tapes)== 3:  # Ensure there are 3 tapes
             tapes[2].clear()
 
         deltaTable = {
-            # start -> acc
+            # start -> acc - when one of the numbers is zero
             ("start", "_", 1, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
             ("start", "_", "_", "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
             ("start", 1, "_", "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
 
+            ("start", "-", "_", "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
+            ("start", "_", "-", "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
+
             ("start", "_", 0, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
             ("start", 0, "_", "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
-            ("start", 0, 0, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
+            # ("start", 0, 0, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
 
-            ("start", 0, 1, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
-            ("start", 1, 0, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
+            # ("start", 0, 1, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
+            # ("start", 1, 0, "_") : {"newState": "acc", "movement": ['S', 'S', 'S']},
 
 
             # start -> minus
@@ -97,7 +102,15 @@ class Multiplication(Tm):
 
             
         }
+
+     
+
+
         super().__init__(tapes, "start", deltaTable, 3)
+
+        # if one of the tapes is zero with representation of 0 or 0000... or '-' before, it would change it to ["_"]
+        self.checkZero(0)
+        self.checkZero(1)
 
     
     def addMinus(self):

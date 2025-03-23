@@ -18,8 +18,8 @@ def decimalToBinaryList(num, minus = False):
     return a
 
 
-a = decimalToBinaryList(1234)
-b = decimalToBinaryList(567)
+a = decimalToBinaryList(13, True)
+b = decimalToBinaryList(26)
 
 # div and remainder
 # divMachine = Division([a, b])
@@ -44,6 +44,9 @@ b = decimalToBinaryList(567)
 # print(addMachine)
 
 # mul
+# a = decimalToBinaryList(13)
+# b = decimalToBinaryList(2, True)
+
 # mulMacine = Multiplication([a, b])
 # mulMacine.runMachine()
 # print(mulMacine)
