@@ -1,10 +1,15 @@
 from methods.phi import phiN
-from methods.squere import Squere
-from operations.multiplication import Multiplication
-from utils2 import binaryToDecimal
 from methods.euclidis import Euclid
-from utils2 import decimalToBinaryList
+from methods.Crt import Crt
+from methods.squere import Squere
 
+
+from operations.multiplication import Multiplication
+from operations.division import Division
+from operations.subtraction import Subtraction
+
+from utils2 import binaryToDecimal
+from utils2 import decimalToBinaryList
 
 
 class RSA():
@@ -46,6 +51,53 @@ class RSA():
         square = Squere([xList, self.b, self.n])
         square.runMachine()
         print(f"The encrypted value of {x} is: {binaryToDecimal(square.result())}")
+
+    
+
+    def decrypt(self, y: int):
+        yList = decimalToBinaryList(y)
+
+        def xi(v: list):
+            """
+            v = p or q
+            compute x1 or x2 for the crt
+                * x = y % v
+                * b = a % (v-1)
+                * n = v
+                * compute x^b mod n = (y mod v)^(a mod (v-1)) % v
+                * 
+            """
+            # x = y % v
+            xMachine = Division([yList, v]) 
+            xMachine.runMachine()
+            x = xMachine.getRemainder()
+
+            # minus = v-1
+            minus = []
+            Subtraction([v, [1], minus ]).runMachine()
+
+            # b = a % (v-1)
+            bMachine = Division([self.a, minus])
+            bMachine.runMachine()
+            b = bMachine.getRemainder()
+
+            # result = (x^b)% v
+            square = Squere([x, b, v])
+            square.runMachine()
+            result = square.result()
+
+            return result
+
+        x1 = xi(self.p)
+        x2 = xi(self.q)
+
+        crtMachine = Crt([x1, x2, self.p, self.q])
+        crtMachine.runMachine()
+
+        x = crtMachine.getX()
+
+        print(f"The decrypted value of {y} is: {binaryToDecimal(x)}")
+        
 
     def __repr__(self):
         """

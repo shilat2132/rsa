@@ -100,6 +100,27 @@ class Euclid(Tm):
             
             else:
                 self.step()
+
+
+        # keep s and t in their proper ring: s*a + t*b -> s should be in ring b (ring 2) and t should be in ring a (ring 1)
+        sIndex = self.tapesDict["s(i-1)"]
+        tIndex = self.tapesDict["t(i-1)"]
+
+        divMachine = Division([self.tapes[sIndex], self.ring2]) #s % b
+        divMachine.runMachine()
+        self.tapes[sIndex] = divMachine.getRemainder()
+
+
+        divMachine = Division([self.tapes[tIndex], self.ring1]) #t % a
+        divMachine.runMachine()
+        self.tapes[tIndex] = divMachine.getRemainder()
+
+        # sHead = getHeadIndex(self.tapes[sIndex])
+        # tHead = getHeadIndex(self.tapes[tIndex])
+
+        # if sHead == "-":
+
+
                 
 
 

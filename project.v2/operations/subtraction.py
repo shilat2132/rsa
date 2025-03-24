@@ -76,6 +76,9 @@ class Subtraction(Tm):
             # zeros -> comp1
             ("zeros", "_", "_", "_") : {"newState": "comp1" , "movement": ['R', "S", "S"]},
 
+           
+
+
 
             # carry -> carry
             ("carry", 0, "_", 0) : {"newState": "carry", "movement": ['R', "S", "R"]},
@@ -142,12 +145,12 @@ class Subtraction(Tm):
         }
 
 
-        # for combo in product([0, 1], repeat=3):  
-        #     # ("goLeft", 0, 0, 0) : {"newState": "addMinus", "movement": ['L', "L", "L"]},
-        #     deltaTable[("goLeft", *combo)] = {
-        #         "newState": "addMinus",
-        #         "movement": ['L', 'L', 'L']
-        #     }
+        for combo in product([0, 1, "_"], repeat=3):  
+             # add1 -> carry: make sure that before checking the carry, the b tape would be on the "_" on the left of the tape
+            deltaTable[("add1", *combo)] = {
+                "newState": "carry",
+                "movement": ['S', 'L', 'S']
+            }
        
 
         super().__init__(tapes, "s", deltaTable, 3)
@@ -168,9 +171,10 @@ class Subtraction(Tm):
                 self.pos[2] = getHeadIndex(self.tapes[2]) #updates the position of tape c
                 # at this point a and c tapes are both positioned at the beginning of the numbers. 
                 # in the carry's state we would want to compare their lengths
+                self.pos[1] = getHeadIndex(self.tapes[1])
+                self.step() #would move the b tape to a "_" before the first character for the carry checking
 
 
-                self.currentState = "carry"
 
             
             elif self.currentState == "compResult":

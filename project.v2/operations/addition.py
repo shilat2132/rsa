@@ -41,6 +41,9 @@ class Addition(Tm):
             ("qCarry", "_", 0, "_") : {"newState": "q0", "write": ["_", 0, 1], "movement": ['S', 'L', 'L']},
         }
 
+        tapes[0] = tapes[0].copy()
+        tapes[1] = tapes[1].copy()
+        
         pos = []
         i1, i2 = getLastCharIndex(tapes[0]), getLastCharIndex(tapes[1]) #start from the lsb of the numbers
         pos.append(i1)

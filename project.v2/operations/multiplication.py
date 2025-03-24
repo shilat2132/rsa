@@ -135,7 +135,7 @@ class Multiplication(Tm):
                 break
 
             if self.currentState == "add":
-                t = self.tapes[2].copy() # t= y
-                Addition([t, self.tapes[0].copy(), self.tapes[2]]).runMachine() #y= a+y
+                # t = self.tapes[2].copy() # t= y
+                Addition([self.tapes[2], self.tapes[0], self.tapes[2]]).runMachine() #y= a+y
             
             self.step()

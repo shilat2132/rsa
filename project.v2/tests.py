@@ -14,20 +14,20 @@ from utils2 import binaryToDecimal, decimalToBinaryList
 
 
 
-p = decimalToBinaryList(37)
-q = decimalToBinaryList(41)
-b = decimalToBinaryList(31)
+p = decimalToBinaryList(127)
+q = decimalToBinaryList(191)
+b = decimalToBinaryList(47)
 
 r = RSA(p, q, b)
 # print(r)
-r.encrypt(1228)
+r.decrypt(10642)
 
 # phi = phiN([decimalToBinaryList(103), decimalToBinaryList(101)])
 
 # print(binaryToDecimal(phi))
 
-a = decimalToBinaryList(13, True)
-b = decimalToBinaryList(26)
+# a = decimalToBinaryList(13, True)
+# b = decimalToBinaryList(26)
 
 # div and remainder
 # divMachine = Division([a, b])

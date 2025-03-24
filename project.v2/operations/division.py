@@ -146,7 +146,7 @@ class Division(Tm):
 
         
         # [0: a, 1: b, 2: m, 3: r, 4: d]
-    def getRemainderTape(self):
+    def getRemainder(self):
         return self.tapes[2]
     
     def getQuotient(self):
