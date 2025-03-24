@@ -2,6 +2,10 @@ from methods.phi import phiN
 from methods.squere import Squere
 from operations.multiplication import Multiplication
 from utils2 import binaryToDecimal
+from methods.euclidis import Euclid
+from utils2 import decimalToBinaryList
+
+
 
 class RSA():
 
@@ -31,16 +35,26 @@ class RSA():
         """
         phiN([self.p, self.q, self.phi])
         Multiplication([self.p, self.q, self.n]).runMachine()
-        print("done")
+        euclidMachine = Euclid([self.phi, self.b])
+        euclidMachine.runMachine()
+        self.a = euclidMachine.t()
 
+
+    def encrypt(self, x: int):
+        xList = decimalToBinaryList(x)
+
+        square = Squere([xList, self.b, self.n])
+        square.runMachine()
+        print(f"The encrypted value of {x} is: {binaryToDecimal(square.result())}")
 
     def __repr__(self):
         """
-            string representation of the machine
+            string representation of the RSA fields
         """
-        machine = f""" 
-            n = {binaryToDecimal(self.n)},
-            phi = {binaryToDecimal(self.phi)}
+        rsa = f""" 
+        n = {binaryToDecimal(self.n)},
+        phi = {binaryToDecimal(self.phi)},
+        a = {binaryToDecimal(self.a)}
         """
        
-        return machine
+        return rsa

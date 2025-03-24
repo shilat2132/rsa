@@ -11,6 +11,14 @@ def getHeadIndex(tape: list)-> int:
             break
     return head
 
+def decimalToBinaryList(num, minus = False):
+    a = bin(num)[2:]
+    a = list(a)
+    a = [int(c) for c in a]
+    if minus:
+        a.insert(0, "-")
+    
+    return a
 
 # def getHeadIndex(tape: list)-> int:
 #     """

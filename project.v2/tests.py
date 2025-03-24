@@ -9,24 +9,18 @@ from RSA import RSA
 from methods.phi import phiN
 
 from methods.euclidis import Euclid
-from utils2 import binaryToDecimal
+from utils2 import binaryToDecimal, decimalToBinaryList
 
 
-def decimalToBinaryList(num, minus = False):
-    a = bin(num)[2:]
-    a = list(a)
-    a = [int(c) for c in a]
-    if minus:
-        a.insert(0, "-")
-    
-    return a
+
 
 p = decimalToBinaryList(37)
 q = decimalToBinaryList(41)
 b = decimalToBinaryList(31)
 
 r = RSA(p, q, b)
-print(r)
+# print(r)
+r.encrypt(1228)
 
 # phi = phiN([decimalToBinaryList(103), decimalToBinaryList(101)])
 
