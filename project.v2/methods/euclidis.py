@@ -1,9 +1,8 @@
-from itertools import product
 from operations.division import Division
 from operations.multiplication import Multiplication
 from operations.subtraction import Subtraction
 from tm2 import Tm
-from utils2 import getHeadIndex, isZero
+from utils2 import isZero
 
 
 class Euclid(Tm):
@@ -24,22 +23,11 @@ class Euclid(Tm):
             ("start", 0, 1, "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": [0, 1, 1, "_", "_", 1, "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
             ("start", 1, 0, "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": [1, 0, 1, "_", "_", 1, "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
             ("start", 1, 1, "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": [1, 1, 1, "_", "_", 1, "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
-            # ("start", "-", "1", "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": ["-", "1", "1", "_", "_", "1", "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]}
         }
 
 
 
-        # # all the transitions to check whether r(i) == 0 or not, all of the other tapes can have any of the characters [0, 1, -] in the head, 
-        # # but the tape of q and the tape of m which are _ because they were emptied earlier
-        # for combo in product()([0, 1, '-'], repeat=6):  # 
-        #     c1 = (combo[0], "_") + combo[1:]
-        #     c1 = combo + ("_", "_") #adding the spaces of tape q, and m
-        #     # checkCond -> computeQ/ acc
-        #     deltaTable[("checkCond", *combo)] = {
-        #         # if r(i) != 1
-        #         "newState": "checkCond" if combo[1] == 0 else "updateY",
-        #         "movement": ['S', 'L', 'S', 'S', 'S']
-        #     }
+
 
 
         super().__init__(tapes, "start", deltaTable, 8)
@@ -115,72 +103,6 @@ class Euclid(Tm):
         divMachine.runMachine()
         self.tapes[tIndex] = divMachine.getRemainder()
 
-        # sHead = getHeadIndex(self.tapes[sIndex])
-        # tHead = getHeadIndex(self.tapes[tIndex])
-
-        # if sHead == "-":
-
-
-                
-
-
-
-
-    # def runEuclidAbstract(self):
-    #     """
-    #     runs the euclidis machine abstracttly
-    #     """
-    #     config = Tm.config(self.tapes, self.currentState, self.pos) + "\n"
-    #     self.step() #assigns the initializes values of the euclid algorithm
-    #     config+= Tm.config(self.tapes, self.currentState, self.pos) + "\n"
-
-    #     while self.currentState != "acc":
-    #         # currentState= computeQ
-    #         qMachine = divMachine([self.tapes[self.tapesDict["r(i-1)"]], self.tapes[self.tapesDict["r(i)"]]]) #q = r(i-1) // r(i)
-    #         config+=qMachine.runMachine()
-    #         config+=Tm.copyTape(qMachine.resultTape(), self.tapes[self.tapesDict["q"]])
-
-    #         self.currentState = "r"
-    #         config+=Euclid.Rst(self.tapes[self.tapesDict["r(i-1)"]],
-    #                  self.tapes[self.tapesDict["r(i)"]], 
-    #                  self.tapes[self.tapesDict["q"]], 
-    #                  self.tapes[self.tapesDict["m"]])
-            
-    #         self.currentState = "s"
-    #         config+=Euclid.Rst(self.tapes[self.tapesDict["s(i-1)"]],
-    #                  self.tapes[self.tapesDict["s(i)"]], 
-    #                  self.tapes[self.tapesDict["q"]], 
-    #                  self.tapes[self.tapesDict["m"]])
-            
-    #         self.currentState = "t"
-    #         config+= Euclid.Rst(self.tapes[self.tapesDict["t(i-1)"]],
-    #                  self.tapes[self.tapesDict["t(i)"]], 
-    #                  self.tapes[self.tapesDict["q"]], 
-    #                  self.tapes[self.tapesDict["m"]])
-            
-    #         self.currentState = "emptyQ"
-    #         config+=Tm.emptyTape(self.tapes[self.tapesDict["q"]])
-
-    #         rHead = getHeadIndex(self.tapes[1])
-    #         if self.tapes[1][rHead] == "_":
-    #             self.currentState = "acc"
-    #         else: self.currentState = "computeQ"
-
-    #     # compute t and s in the Z ring of the original number given in the second tape(for example Z 26)
-    #         # it would be done using the remainder machine
-    #         # sa+tb=d
-    #     tape1S = self.tapes[self.tapesDict['s(i-1)']]
-    #     tape2S = self.ring2
-    #     remainderMachineS = remainderMachine([tape1S, tape2S]) #s%b
-    #     config+=remainderMachineS.runMachine()
-    #     config+=Tm.copyTape(remainderMachineS.tapes[2], self.tapes[self.tapesDict['s(i-1)']]) #s = s%b
-
-
-    #     tape1T = self.tapes[self.tapesDict['t(i-1)']]
-    #     tape2T = self.ring1
-    #     remainderMachineT = remainderMachine([tape1T, tape2T]) #t%a
-    #     config+=remainderMachineT.runMachine()
-    #     config+=Tm.copyTape(remainderMachineT.tapes[2], self.tapes[self.tapesDict['t(i-1)']]) #t = t%a
 
 
     def Rst(vim1: list, vi: list, q: list, m: list):
@@ -196,42 +118,6 @@ class Euclid(Tm):
         Tm.copyTape(m, vi)
 
         Tm.emptyTape(m)
-
-        # qvMachine = mulMachine([q, vi])
-        # config = qvMachine.runMachine() 
-        # config+=Tm.copyTape(qvMachine.result(), m) #m = q*vi
-
-        # # v(i-1) = v(i-1) - q*v(i)
-        # config+= subMachine(vim1, m)
-
-        
-        # config+=Tm.copyTape(vim1, m) # m = v(i-1)
-        # config+=Tm.copyTape(vi, vim1) #v(i-1) = v(i)
-        # config+=Tm.copyTape(m, vi) # v(i) = m = v(i-1) - q*v(i)
-        # config+=Tm.emptyTape(m)
-
-        # return config
-
-    
-    # def Rst(vim1: list, vi: list, q: list, m: list):
-    #     """
-    #     computes: v(i+1) = v(i-1)+qi*vi, while the v is r, s or t of the euclides algorithm
-    #     returns: the configuration string
-    #     """
-    #     qvMachine = mulMachine([q, vi])
-    #     config = qvMachine.runMachine() 
-    #     config+=Tm.copyTape(qvMachine.result(), m) #m = q*vi
-
-    #     # v(i-1) = v(i-1) - q*v(i)
-    #     config+= subMachine(vim1, m)
-
-        
-    #     config+=Tm.copyTape(vim1, m) # m = v(i-1)
-    #     config+=Tm.copyTape(vi, vim1) #v(i-1) = v(i)
-    #     config+=Tm.copyTape(m, vi) # v(i) = m = v(i-1) - q*v(i)
-    #     config+=Tm.emptyTape(m)
-
-    #     return config
 
     def d(self):
         return self.tapes[0]

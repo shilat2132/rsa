@@ -38,8 +38,10 @@ class RSA():
         public key: (b, n) -
             * compute n with the multiplication machine
         """
-        phiN([self.p, self.q, self.phi])
+        
         Multiplication([self.p, self.q, self.n]).runMachine()
+        phiN([self.p, self.q, self.phi])
+       
         euclidMachine = Euclid([self.phi, self.b])
         euclidMachine.runMachine()
         self.a = euclidMachine.t()

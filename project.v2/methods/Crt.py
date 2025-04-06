@@ -2,7 +2,7 @@ from tm2 import Tm
 from operations.multiplication import Multiplication
 from operations.addition import Addition
 from operations.division import Division
-
+from utils2 import binaryToDecimal
 from .euclidis import Euclid
 
 
@@ -30,8 +30,20 @@ class Crt(Tm):
             "result": self.tapes[8]
         }
 
+        def printCurrentMachine():
+            machine = ""
+            for k, v in tapesDict.items():
+                num = binaryToDecimal(v)
+                machine += f"{k}: {str(v)}, the number in this tape:  {str(num) } \n"
+            
+            print(machine)
+
+        print("The CRT machine tapes at the start:")
+        printCurrentMachine()
+
         # compute M = m1*m2 = M1*M2
         Multiplication([tapesDict["M1"], tapesDict["M2"], tapesDict["M"]]).runMachine()
+
 
         # compute y1, y2 with euclides of (M1, M2)
         # s*M1 + t*M2 = d -> s=y1, t=y2
@@ -45,6 +57,8 @@ class Crt(Tm):
         tapesDict["y2"] = self.tapes[5]
 
 
+        print("The machine after computing M, y1 and y2")
+        printCurrentMachine()
 
         
 
@@ -68,13 +82,21 @@ class Crt(Tm):
         # result = result + v
         Addition([tapesDict["result"], tapesDict["v"], tapesDict["result"]]).runMachine()
 
+        
         # result = result % M
         remainder = Division([tapesDict["result"], tapesDict["M"]])
         remainder.runMachine()
 
         self.tapes[8] = remainder.getRemainder()
+        tapesDict["result"] = self.tapes[8]
+
+        print("The machine after computing the sum mod M")
+        printCurrentMachine()
 
     
 
     def getX(self):
         return  self.tapes[8]
+    
+
+    

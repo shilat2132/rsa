@@ -19,7 +19,7 @@ q = decimalToBinaryList(191)
 b = decimalToBinaryList(47)
 
 r = RSA(p, q, b)
-# print(r)
+# r.encrypt(2468)
 r.decrypt(10642)
 
 # phi = phiN([decimalToBinaryList(103), decimalToBinaryList(101)])

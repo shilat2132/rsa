@@ -17,10 +17,9 @@ class Tm:
             
             other fields:
             - pos: a list of the position of each tape
-            
-
         """
         
+        # initializes empty tapes with "_"
         for i, t in enumerate(tapes):
             if len(t) == 0:
                 tapes[i].append('_')
@@ -105,7 +104,6 @@ class Tm:
                 t[pos[i]] = write[i]
 
         # simulate moving according to the movement list
-    
         for i, m in enumerate(movements):
             if m == 'R':
                 pos[i] += 1
@@ -142,8 +140,9 @@ class Tm:
     @staticmethod
     def staticRunMachine(tapes: list[list], currentState, deltaTable: dict, pos: list[int] = None, acc= "acc", rej= "rej") -> str:
         """
-        Static method to run the Turing machine based on the delta table.
-        returns: a tuple of the last state and configuration for this run
+            * Static method to run the Turing machine based on the delta table. 
+            * Used for cases when you want to run on certain tapes and not on all the tapes of the machine
+            * returns: a tuple of the last state and configuration for this run
         """
         
         # for empty tapes - initiates with spaces
@@ -239,16 +238,6 @@ class Tm:
         return config
     
    
-    def trim_ones(t):
-        # Find the last index where 1 appears
-        try:
-            last_one_index = len(t) - 1 - t[::-1].index(1)
-            # Slice the list up to the last 1
-            t[:] = t[:last_one_index + 1]
-        except ValueError:
-            # If 1 is not in the list, return an empty list
-            return
-
 
 
     def __repr__(self):
