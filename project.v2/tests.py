@@ -65,13 +65,9 @@ r.decrypt(10642)
 
 
 
-
-
-
-
 # squere
 # x = decimalToBinaryList(6789)
-# b = decimalToBinaryList(34)
+# b = decimalToBinaryList(341)
 # n = decimalToBinaryList(54321)
 
 # squereMachine = Squere([x, b, n])

@@ -1,7 +1,7 @@
 from operations.multiplication import Multiplication
 from operations.division import Division
 from tm2 import Tm
-
+from utils2 import binaryToDecimal
 from itertools import product
 
 
@@ -142,12 +142,24 @@ class Squere(Tm):
 
     
     def runMachine(self):
+        
         # self.tapes = [x, b, n, m, y]
+        # print(f"b in binary: {''.join(map(str, self.tapes[1]))}")
+        # expDecimal=0
+        # nDecimal = binaryToDecimal(self.tapes[2])
+        # xDecimal = binaryToDecimal(self.tapes[0])
+
+        # final = f"{xDecimal} ^ {binaryToDecimal(self.tapes[1])} mod {nDecimal} = ("
+
         while self.currentState != "acc":
-            
             if self.currentState == "remainder0":
                 tapes = [self.tapes[0], self.tapes[2], self.tapes[4]] #tapes = [x, n, y]
                 Division(tapes).runMachine()
+
+                # result = binaryToDecimal(self.tapes[0])
+                # final+= str(result) + "* "
+                # print(f"x^{2**expDecimal} mod b = {result}")
+
                 self.currentState = "initM"
 
             elif self.currentState == "copyM":
@@ -155,7 +167,7 @@ class Squere(Tm):
                 self.currentState = "loop"
 
             elif self.currentState == "loop":
-                
+                # expDecimal+=1
                 # raise m to the power of 2
                 t = self.tapes[3]
                 Multiplication([t, t, t]).runMachine() #m = m^2
@@ -168,6 +180,10 @@ class Squere(Tm):
                 self.step() #activate the transition in the delta table
             
             elif self.currentState=="updateY":
+                # result = binaryToDecimal(self.tapes[3])
+                # final+= str(result) + "* "
+                # print(f"x^{2**expDecimal} mod n = {result}")
+
                     # compute y = (y*m)%n
                 # compute y=y*m
                 tapes = [self.tapes[4], self.tapes[3], self.tapes[4]] #tapes = [y, m, y]
@@ -181,7 +197,14 @@ class Squere(Tm):
                 self.currentState = "checkCond"
             
             else:
+                
                 self.step()
+        
+        # print(f"{final[:-2]}) mod {nDecimal} = {binaryToDecimal(self.tapes[4])}")
+                
+                    
+            
+            
 
 
     def result(self):
