@@ -47,13 +47,16 @@ class Tm:
     def checkZero(self, tapeIndex):
         """ 
         a method for checking whether the number in the tape (usually result tape) 
-        is 0, 0000...0, or versions of that with '-' in order to replace it with a tape of only one "_"
+            is 0, 0000...0, or versions of that with '-' in order to replace it with a tape of only one "_"
+
+            - returns: True if the tape is zero, False otherwise
         """
         for t in self.tapes[tapeIndex]:
             if t == 1:
-                return
+                return False
         
         self.tapes[tapeIndex] = ["_"]
+        return True
       
 
     
@@ -183,13 +186,7 @@ class Tm:
         #   "write": [0, 1],
         #   "spaces": [0, 1]
         # }
-        steps = [
-            # first step
-            {
-                "action": "first_step",
-                "pos": pos
-            }
-        ]
+        steps = []
         # config = Tm.config(tapes, currentState, pos) + "\n"
         
         while currentState != acc and currentState != rej:

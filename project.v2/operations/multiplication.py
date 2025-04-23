@@ -2,6 +2,7 @@ from itertools import product
 from tm2 import Tm
 from utils2 import getHeadIndex
 from .addition import Addition
+import copy
 
 class Multiplication(Tm):
 
@@ -119,7 +120,7 @@ class Multiplication(Tm):
             - returns the steps list
         """
 
-        steps = self.runMachine("addMinus")
+        steps = self.runMachine()
         self.pos[2] = getHeadIndex(self.tapes[2]) #set the head of the result tape to the start
         self.currentState = "msb"
 
@@ -130,22 +131,14 @@ class Multiplication(Tm):
         return steps
 
 
-    def runMachine(self, runner= None):
+    def runMachine(self):
         """
         runs the multiplication machine with consideration of the '-' sign
             - returns the steps list
         """
 
-        if runner and runner == "addMinus":
-            steps = []
-            
-        else: 
-            steps = [
-            {
-                "action": "first_step",
-                "pos": self.pos
-            }
-        ] 
+     
+        steps = []
             
         # tapes = [a, b, y], compute: y = a*b
         while self.currentState != self.acc:
@@ -159,13 +152,17 @@ class Multiplication(Tm):
                 # t = self.tapes[2].copy() # t= y
                 tapes = [self.tapes[2], self.tapes[0], self.tapes[2]]
                 subMachineStep = {
-                    "action": "submachine",
-                    "tapes": tapes
-
+                    "action": "submachine"
                 }
-                sts = Addition(tapes).runMachine() #y= a+y
+                addMachine = Addition(tapes)
+
+                subMachineStep["tapes"] = copy.deepcopy(addMachine.tapes)  # Create a deep copy for the inner lists of the tapes list
+
+                sts = addMachine.runMachine() #y= a+y
                 subMachineStep["steps"] = sts
+                subMachineStep["updatedTapes"] = copy.deepcopy(self.tapes)
                 steps.append(subMachineStep)
+                
             
             step = self.step()
 

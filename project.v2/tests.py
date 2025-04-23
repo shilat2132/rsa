@@ -7,6 +7,7 @@ from operations.division import Division
 from methods.squere import Squere
 from RSA import RSA
 import time
+from operations.complement import complement
 
 from methods.phi import phiN
 
@@ -28,14 +29,21 @@ from utils2 import binaryToDecimal, decimalToBinaryList, print_steps
 
 # print(binaryToDecimal(phi))
 
-# a = decimalToBinaryList(3120)
-# b = decimalToBinaryList(17)
+a = decimalToBinaryList(5)
+b = decimalToBinaryList(2)
+
+# complement
+# steps  = complement(a)
+# print_steps(steps)
+
+# print(a)
 
 # div and remainder
 # start = time.perf_counter()
 
-# divMachine = Division([a, b])
-# divMachine.runMachine()
+divMachine = Division([a, b])
+steps = divMachine.runMachine()
+print_steps(steps)
 
 # end = time.perf_counter()
 # print(f"Time taken: {end - start} seconds")
@@ -72,14 +80,15 @@ from utils2 import binaryToDecimal, decimalToBinaryList, print_steps
 # print_steps(steps)
 
 # mul
-a = decimalToBinaryList(2, True)
-b = decimalToBinaryList(2)
+# a = decimalToBinaryList(2, True)
+# b = decimalToBinaryList(2)
 
-start = time.perf_counter()
-mulMacine = Multiplication([a, b])
-steps = mulMacine.runMachine()
-print_steps(steps)
+# start = time.perf_counter()
+# mulMacine = Multiplication([a, b])
+# steps = mulMacine.runMachine()
+# print_steps(steps)
 
+# print(mulMacine)
 
 # end = time.perf_counter()
 # print(f"Time taken: {end - start} seconds")
