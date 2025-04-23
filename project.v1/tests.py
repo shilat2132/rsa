@@ -1,3 +1,4 @@
+from turtle import st
 from basicMachines.mulMachine import mulMachine
 from basicMachines.divMachine import divMachine
 from rsa.phi import phiN
@@ -8,6 +9,7 @@ from rsa.Euclid import Euclid
 from rsa.squere.binaryMachine import binary
 from rsa.squere.square import SquereM
 from utils import unaryToDecimal
+import time
 
 
 
@@ -35,8 +37,8 @@ from utils import unaryToDecimal
 # print(addBinMachine)
 
 
-a = ["1" for i in range(240)]
-b = ["1" for i in range(46)]
+a = ["1" for i in range(16)]
+b = ["1" for i in range(500)]
 # a.insert(0, "-")
 
 # x = ["1" for i in range(101)]
@@ -61,11 +63,14 @@ b = ["1" for i in range(46)]
 
 # Euclid
 
-eu = Euclid([a, b])
-config = eu.runEuclidAbstract()
-print(f"gcd =  {unaryToDecimal(eu.d())}")
-print(f"s = {unaryToDecimal(eu.s())}")
-print(f"t =  {unaryToDecimal(eu.t())}")
+# start = time.perf_counter()
+# eu = Euclid([a, b])
+# config = eu.runEuclidAbstract()
+# end = time.perf_counter()
+# print(f"Time taken: {end - start} seconds")
+# print(f"gcd =  {unaryToDecimal(eu.d())}")
+# print(f"s = {unaryToDecimal(eu.s())}")
+# print(f"t =  {unaryToDecimal(eu.t())}")
 
 # a.insert(0, "-")
 # b.insert(0, "-")
@@ -76,8 +81,12 @@ print(f"t =  {unaryToDecimal(eu.t())}")
 # print(f"phi of n: {result}. the number in this tape is: {unaryToDecimal(result)}")
 
 # div
+# start = time.perf_counter()
 # d= divMachine([a, b])
 # config =  d.runMachine()
+
+# end = time.perf_counter()
+# print(f"Time taken: {end - start} seconds")
 # print("the machine of division: {d}".format(d=d))
 
 # copy
@@ -85,13 +94,22 @@ print(f"t =  {unaryToDecimal(eu.t())}")
 # print(a, b)
 
 # sub
+# start = time.perf_counter()
+
 # config = subMachine(a, b)
-# print("the result of subtraction: {a}".format(a=a))
+# end = time.perf_counter()
+# print(end - start)
+
+
 
 
 # mul
-# m= mulMachine([a, b])
-# config = m.runMachine()
+
+start = time.perf_counter()
+m= mulMachine([a, b])
+config = m.runMachine()
+end = time.perf_counter()
+print(f"Time taken: {end - start} seconds")
 # print("the machine of multiplication: {m}".format(m=m))
 
 # print(config)

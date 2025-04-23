@@ -116,26 +116,58 @@ class Multiplication(Tm):
     def addMinus(self):
         """
         computes regular multiplication and adds the '-' in the end
+            - returns the steps list
         """
 
-        self.runMachine()
+        steps = self.runMachine("addMinus")
         self.pos[2] = getHeadIndex(self.tapes[2]) #set the head of the result tape to the start
         self.currentState = "msb"
 
         while self.currentState != self.acc:
-            self.step()
+            step = self.step()
+            steps.append(step)
+        
+        return steps
 
 
-    def runMachine(self):
+    def runMachine(self, runner= None):
+        """
+        runs the multiplication machine with consideration of the '-' sign
+            - returns the steps list
+        """
+
+        if runner and runner == "addMinus":
+            steps = []
+            
+        else: 
+            steps = [
+            {
+                "action": "first_step",
+                "pos": self.pos
+            }
+        ] 
+            
         # tapes = [a, b, y], compute: y = a*b
         while self.currentState != self.acc:
             if self.currentState == "minus":
                 self.currentState = "start"
-                self.addMinus()
+                sts = self.addMinus()
+                steps.extend(sts)
                 break
 
             if self.currentState == "add":
                 # t = self.tapes[2].copy() # t= y
-                Addition([self.tapes[2], self.tapes[0], self.tapes[2]]).runMachine() #y= a+y
+                tapes = [self.tapes[2], self.tapes[0], self.tapes[2]]
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": tapes
+
+                }
+                sts = Addition(tapes).runMachine() #y= a+y
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
             
-            self.step()
+            step = self.step()
+
+            steps.append(step)
+        return steps
