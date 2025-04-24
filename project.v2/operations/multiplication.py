@@ -137,7 +137,6 @@ class Multiplication(Tm):
             - returns the steps list
         """
 
-     
         steps = []
             
         # tapes = [a, b, y], compute: y = a*b
@@ -151,20 +150,25 @@ class Multiplication(Tm):
             if self.currentState == "add":
                 # t = self.tapes[2].copy() # t= y
                 tapes = [self.tapes[2], self.tapes[0], self.tapes[2]]
+                addMachine = Addition(tapes)  # Create the addMachine first
+
                 subMachineStep = {
-                    "action": "submachine"
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(addMachine.tapes)  # Use addMachine.tapes
                 }
-                addMachine = Addition(tapes)
-
-                subMachineStep["tapes"] = copy.deepcopy(addMachine.tapes)  # Create a deep copy for the inner lists of the tapes list
-
-                sts = addMachine.runMachine() #y= a+y
+                sts = addMachine.runMachine()  # y = a + y
                 subMachineStep["steps"] = sts
-                subMachineStep["updatedTapes"] = copy.deepcopy(self.tapes)
                 steps.append(subMachineStep)
-                
-            
-            step = self.step()
 
+                # Add the updateTapeStep right after the subMachineStep is appended
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
+            step = self.step()
             steps.append(step)
+
         return steps

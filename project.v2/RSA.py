@@ -1,3 +1,4 @@
+from calendar import c
 from methods.phi import phiN
 from methods.euclidis import Euclid
 from methods.Crt import Crt
@@ -10,11 +11,15 @@ from operations.subtraction import Subtraction
 
 from utils2 import binaryToDecimal
 from utils2 import decimalToBinaryList
+import copy
 
 
 class RSA():
 
     def __init__(self, p: list, q: list, b: list):
+        """
+        Holds the public and private keys of the RSA algorithm.
+        """
         self.x = None
         self.b = b
         self.p = p
@@ -25,27 +30,85 @@ class RSA():
         self.phi = []
         self.a = []
 
-        self.keyGeneration()
-
-    
+        # Store the key generation steps temporarily
+        self._key_generation_steps = self.keyGeneration()
 
     def keyGeneration(self):
         """
         private key: (p, q, a) - 
             * compute phi = (p-1)(q-1)
-            * compute a with the euclides algorithm
+            * compute a with the Euclid algorithm
 
         public key: (b, n) -
             * compute n with the multiplication machine
-        """
         
-        Multiplication([self.p, self.q, self.n]).runMachine()
-        phiN([self.p, self.q, self.phi])
-       
+        returns the steps list
+        """
+        machine_tapes = [self.n, self.phi, self.a]
+
+        main_step = {
+            "action": "main",
+            "formula": "generation of the n (public key) and a (private key)",
+            "tapes": copy.deepcopy(machine_tapes)
+        }
+        steps = []
+
+        # Compute n = p * q
+        mulMachine = Multiplication([self.p, self.q, self.n])
+        subMachineStep = {
+            "action": "submachine",
+            "formula": "n = p * q",
+            "tapes": copy.deepcopy(mulMachine.tapes)
+        }
+        mulSteps = mulMachine.runMachine()
+        subMachineStep["steps"] = mulSteps
+        steps.append(subMachineStep)
+
+        # Compute phi(n) = (p - 1) * (q - 1)
+        tapes = [self.p, self.q, self.phi]
+
+        subMachineStep = {
+            "action": "submachine",
+            "formula": "phi(n) = (p - 1) * (q - 1)",
+            "tapes": copy.deepcopy(tapes)
+        }
+
+        phiSteps = phiN(tapes)
+        subMachineStep["steps"] = phiSteps
+        
+        steps.append(subMachineStep)
+
+        # Compute a using the Euclid algorithm
         euclidMachine = Euclid([self.phi, self.b])
-        euclidMachine.runMachine()
+        subMachineStep = {
+            "action": "submachine",
+            "formula": "a = gcd(phi(n), b)",
+            "tapes": copy.deepcopy(euclidMachine.tapes)
+        }
+        euclidSteps = euclidMachine.runMachine()
+        subMachineStep["steps"] = euclidSteps
+        steps.append(subMachineStep)
+
+        # Set the private key 'a'
         self.a = euclidMachine.t()
 
+        step = {
+            "action" : "updateMachine",
+            "tapes": machine_tapes
+        }
+        steps.append(step)
+
+        main_step["steps"] = steps
+        # Return the object with action, formula, and steps
+        return main_step
+
+    def getKeyGenerationSteps(self):
+        """
+        Retrieves the key generation steps and resets the attribute.
+        """
+        steps = self._key_generation_steps  # Retrieve the steps
+        self._key_generation_steps = None  # Reset the attribute
+        return steps
 
     def encrypt(self, x: int):
         xList = decimalToBinaryList(x)

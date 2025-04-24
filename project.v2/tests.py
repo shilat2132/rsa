@@ -17,20 +17,25 @@ from utils2 import binaryToDecimal, decimalToBinaryList, print_steps
 
 
 
-# p = decimalToBinaryList(127)
-# q = decimalToBinaryList(191)
-# b = decimalToBinaryList(47)
+p = decimalToBinaryList(3)
+q = decimalToBinaryList(5)
+b = decimalToBinaryList(3)
 
-# r = RSA(p, q, b)
+r= RSA(p, q, b)
+main_steps = r.getKeyGenerationSteps()
+print_steps(main_steps["steps"])
 # # r.encrypt(2468)
 # r.decrypt(10642)
 
-# phi = phiN([decimalToBinaryList(103), decimalToBinaryList(101)])
 
+# phi
+# phi = []
+# steps = phiN([decimalToBinaryList(2), decimalToBinaryList(3), phi])
+# print_steps(steps)
 # print(binaryToDecimal(phi))
 
-a = decimalToBinaryList(5)
-b = decimalToBinaryList(2)
+# a = decimalToBinaryList(5)
+# b = decimalToBinaryList(2)
 
 # complement
 # steps  = complement(a)
@@ -41,9 +46,11 @@ b = decimalToBinaryList(2)
 # div and remainder
 # start = time.perf_counter()
 
-divMachine = Division([a, b])
-steps = divMachine.runMachine()
-print_steps(steps)
+# divMachine = Division([a, b])
+# steps = divMachine.runMachine()
+# print_steps(steps)
+
+# print(divMachine)
 
 # end = time.perf_counter()
 # print(f"Time taken: {end - start} seconds")
@@ -60,13 +67,12 @@ print_steps(steps)
 
 
 # euclid
-# a = decimalToBinaryList(3120)
-# b = decimalToBinaryList(17)
-# start = time.perf_counter()
+# a = decimalToBinaryList(7)
+# b = decimalToBinaryList(3)
 # e = Euclid([a, b])
-# e.runMachine()
-# end = time.perf_counter()
-# print(f"Time taken: {end - start} seconds")
+# steps = e.runMachine()
+# print_steps(steps)
+
 # print(f"gcd =  {binaryToDecimal(e.d())}")
 # print(f"s = {binaryToDecimal(e.s())}")
 # print(f"t =  {binaryToDecimal(e.t())}")

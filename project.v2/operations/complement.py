@@ -22,22 +22,28 @@ def complement(a: list):
     while currentState != "acc":
         if currentState == "add":
             tapes = [a.copy(), [1], a]
+            addMachine = Addition(tapes)  # Create the addMachine first
+
             subMachibeStep = {
                 "action": "submachine",
+                "tapes": copy.deepcopy(addMachine.tapes)
             }
-
-            addMachine = Addition(tapes)
-            subMachibeStep["tapes"] = copy.deepcopy(addMachine.tapes)
             sts = addMachine.runMachine()
             subMachibeStep["steps"] = sts
-            subMachibeStep["updatedTapes"] = [a]
-
             steps.append(subMachibeStep)
+
+            # Add the updateTapeStep right after the subMachineStep is appended
+            updateTapeStep = {
+                "action": "updateTape",
+                "tape_index": 0,
+                "tape": a.copy()
+            }
+            steps.append(updateTapeStep)
+
             currentState = "acc"
         
         else:
             currentState, step = Tm.staticStep([a], currentState, deltaTable, pos)
             steps.append(step)
 
-    
     return steps

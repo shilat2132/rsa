@@ -1,13 +1,13 @@
 def print_steps(steps, indent=0):
     for step in steps:
-        if step.get("action") == "submachine":  # Handle "submachine" separately
+        if step.get("action") == "submachine" or step.get("action") == "main":  # Handle "submachine" separately
             print(" " * indent + "Submachine:")
+            if step.get("formula"): print(" " * indent + f"formula: {step['formula']}")
             print(" " * indent + f"tapes: {step['tapes']}")
             print(" " * indent + "Steps:")
             # Recursively print the nested steps with increased indentation
             print_steps(step["steps"], indent + 4)
 
-            print(" " * indent + f"updated steps (in the end of the machine run): {step['updatedTapes']}")
         else:
             # Print the current step with indentation
             print(" " * indent + str(step))

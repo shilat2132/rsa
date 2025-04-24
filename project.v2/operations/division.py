@@ -122,7 +122,6 @@ class Division(Tm):
         """
         
         steps = []
-        updateTape = False
         while self.currentState != self.acc:
             if self.currentState == "sub":
                
@@ -135,6 +134,13 @@ class Division(Tm):
                 subMachineStep["steps"] = sts
                 steps.append(subMachineStep)
 
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 3,
+                    "tape": self.tapes[3].copy()
+                }
+                steps.append(step)
+
                 self.pos[3] = getHeadIndex(self.tapes[3]) #set the position of the r tape
                 
                 
@@ -144,17 +150,31 @@ class Division(Tm):
             elif self.currentState == "check":
                 Tm.emptyTape(self.tapes[3]) #clear the tape of r
 
-                step_updateTape =  {"tape_index": 3, "tape": self.tapes[3].copy()}
-                step = self.step()
-                step["updateTape"]= step_updateTape
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 3,
+                    "tape": self.tapes[3].copy()
+                }
+                steps.append(step)
+                
+                step = self.step()           
+                steps.append(step)
 
             elif self.currentState == "copyR":
                 Tm.copyTape(self.tapes[3], self.tapes[2]) #m = r
+
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(step)
+
                 self.pos[2] = getLastCharIndex(self.tapes[2]) #set the position of the m tape
 
-                step_updateTape =  {"tape_index": 2, "tape": self.tapes[2].copy()}
+                
                 step = self.step()
-                step["updateTape"]= step_updateTape
+                steps.append(step)
 
             elif self.currentState == "addMinus":
                 self.currentState = "start"
@@ -169,19 +189,28 @@ class Division(Tm):
                 }
                 sts = subMachine.runMachine()
                 subMachineStep["steps"] = sts
-
-                subMachineStep["updatedTapes"] = copy.deepcopy(self.tapes)  
                 steps.append(subMachineStep)
+
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(step)
+
                 break
 
             else:
                 step = self.step()
-                if updateTape:
-                    step["updateTape"] = {"tape_index": 4, "tape": self.tapes[4].copy()}
-                    updateTape = False
                 steps.append(step)
         
-        updateTape = self.checkZero(4)
+        if self.checkZero(4):
+            step = {
+                "action": "updateTape",
+                "tape_index": 4,
+                "tape": self.tapes[4].copy()
+            }
+            steps.append(step)
 
         return steps
 
