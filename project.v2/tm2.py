@@ -17,10 +17,9 @@ class Tm:
             
             other fields:
             - pos: a list of the position of each tape
-            
-
         """
         
+        # initializes empty tapes with "_"
         for i, t in enumerate(tapes):
             if len(t) == 0:
                 tapes[i].append('_')
@@ -48,13 +47,16 @@ class Tm:
     def checkZero(self, tapeIndex):
         """ 
         a method for checking whether the number in the tape (usually result tape) 
-        is 0, 0000...0, or versions of that with '-' in order to replace it with a tape of only one "_"
+            is 0, 0000...0, or versions of that with '-' in order to replace it with a tape of only one "_"
+
+            - returns: True if the tape is zero, False otherwise
         """
         for t in self.tapes[tapeIndex]:
             if t == 1:
-                return
+                return False
         
         self.tapes[tapeIndex] = ["_"]
+        return True
       
 
     
@@ -67,8 +69,16 @@ class Tm:
             - internal method that adds spaces at the beginning or end of a tape if needed
 
             returns:
-            the new current state 
+            the new current state and an object with the form of:  
+              {
+                "action": "step",
+                "pos": [2, 2],
+                "write": [0, 1],
+                "spaces": [0, 1]
+            }
         """
+
+        spaces = []
 
         def ensureBoundarySpace(tapeIndex: int, position: int):
             """
@@ -81,15 +91,27 @@ class Tm:
             if position == -1:
                 tapes[tapeIndex].insert(0, "_")
                 pos[tapeIndex] = 0
+                spaces.append(-1)
+                return
             
             tapeLength = len(tapes[tapeIndex])
             if position == tapeLength:
                 tapes[tapeIndex].append("_")
                 pos[tapeIndex] = tapeLength
+                spaces.append(1)
+                return
+            
+            # if reached here - there is no need to add a space to the list
+            spaces.append(0)
+            
+
+        step = {
+            "action": "step",
+            "pos": pos.copy()
+        }
 
         # create the symbols
         symbols = [t[pos[i]] for i, t in enumerate(tapes)]
-
         # create the input for the delta table and extract the transition from the table
         deltaInput = (currentState,) + tuple(symbols)
         if deltaInput not in deltaTable:
@@ -105,7 +127,6 @@ class Tm:
                 t[pos[i]] = write[i]
 
         # simulate moving according to the movement list
-    
         for i, m in enumerate(movements):
             if m == 'R':
                 pos[i] += 1
@@ -113,9 +134,13 @@ class Tm:
             elif m == 'L':
                 pos[i] -= 1
                 ensureBoundarySpace(i, pos[i])
+            elif m == 'S':
+                spaces.append(0)
 
+        step["write"] = write
+        step["spaces"] = spaces
         # return the new current state
-        return newState
+        return newState, step
 
     @staticmethod
     def config(tapes: list[list], currentState, pos):
@@ -142,8 +167,9 @@ class Tm:
     @staticmethod
     def staticRunMachine(tapes: list[list], currentState, deltaTable: dict, pos: list[int] = None, acc= "acc", rej= "rej") -> str:
         """
-        Static method to run the Turing machine based on the delta table.
-        returns: a tuple of the last state and configuration for this run
+            * Static method to run the Turing machine based on the delta table. 
+            * Used for cases when you want to run on certain tapes and not on all the tapes of the machine
+            * returns: a tuple of the last state and the steps list for this run
         """
         
         # for empty tapes - initiates with spaces
@@ -154,20 +180,27 @@ class Tm:
         if not pos:
             pos = [getHeadIndex(t) for t in tapes]
 
-       
-        config = Tm.config(tapes, currentState, pos) + "\n"
+        #  {
+        #   "action": "step",
+        #   "pos": [2, 2],
+        #   "write": [0, 1],
+        #   "spaces": [0, 1]
+        # }
+        steps = []
+        # config = Tm.config(tapes, currentState, pos) + "\n"
         
         while currentState != acc and currentState != rej:
-            currentState = Tm.staticStep(tapes, currentState, deltaTable, pos)
-            config+=Tm.config(tapes, currentState, pos) + "\n"
+            currentState, step = Tm.staticStep(tapes, currentState, deltaTable, pos)
+            # config+=Tm.config(tapes, currentState, pos) + "\n"
+            steps.append(step)
         
-        return currentState, config
+        return currentState, steps
 
     @staticmethod
     def emptyTape(t: list[str]):
         """
         given a tape of the machine, erase all characters different from '_'
-        returns: the configuration
+        returns: the steps list
         """
         
         deltaTable= {
@@ -177,8 +210,8 @@ class Tm:
             ("delete", "_") : {"newState": "acc", "write": ["_"], "movement": ['S']},
         }
 
-        currentState, config =  Tm.staticRunMachine([t], "delete", deltaTable)
-        return config
+        currentState, steps =  Tm.staticRunMachine([t], "delete", deltaTable)
+        return steps
 
 
     
@@ -187,7 +220,7 @@ class Tm:
     def copyTape(a: list[str], b:list[str]):
         """
         given 2 tapes in a machine - copy tape a to tape b
-        returns: the configuration string
+        returns: the steps list
         """
 
         deltaTable = {
@@ -218,8 +251,8 @@ class Tm:
             ("deleteRest", "_", "_") : {"newState": "acc", "write": ["_", "_"], "movement": ['S', "S"]},
         }
 
-        currentState, config =  Tm.staticRunMachine([a, b], "copy", deltaTable)
-        return config
+        currentState, steps =  Tm.staticRunMachine([a, b], "copy", deltaTable)
+        return steps
 
 
     # instance methods
@@ -227,28 +260,20 @@ class Tm:
         """
             Wrapper instance method that calls the static `staticStep` method.
             - updates the currentState after the transition
+            - returns the step object
         """
-        self.currentState = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
+        self.currentState, step = Tm.staticStep(self.tapes, self.currentState, self.deltaTable, self.pos)
+        return step
     
     def runMachine(self):
         """
         Wrapper instance method that calls the static `staticRunMachine` method.
-        returns: the configuration
+        returns: the steps list 
         """
-        self.currentState, config = Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.pos)
-        return config
+        self.currentState, steps = Tm.staticRunMachine(self.tapes, self.currentState, self.deltaTable, self.pos)
+        return steps
     
    
-    def trim_ones(t):
-        # Find the last index where 1 appears
-        try:
-            last_one_index = len(t) - 1 - t[::-1].index(1)
-            # Slice the list up to the last 1
-            t[:] = t[:last_one_index + 1]
-        except ValueError:
-            # If 1 is not in the list, return an empty list
-            return
-
 
 
     def __repr__(self):

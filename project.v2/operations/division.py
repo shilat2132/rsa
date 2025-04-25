@@ -1,6 +1,9 @@
+from turtle import st, up
 from tm2 import Tm
 from .subtraction import Subtraction
 from utils2 import getHeadIndex, getLastCharIndex
+import copy
+
 
 class Division(Tm):
     """
@@ -20,6 +23,10 @@ class Division(Tm):
             for t in range(2, len(tapes)):
                 tapes[t].clear()
         deltaTable = {
+            # start -> acc
+            ("start", "_", 0, "_", "_", "_") : {"newState": "acc" , "write": ["_", 0, 0, "_", 0], "movement": ['S', "S", "S", "S", "S"]},
+             ("start", "_", 1, "_", "_", "_") : {"newState": "acc" , "write": ["_", 1, 0, "_", 0] , "movement": ['S', "S", "S", "S", "S"]},
+
             #start -> addMinus
             ("start", "-", 0, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 0, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
             ("start", "-", 1, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 1, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
@@ -30,6 +37,8 @@ class Division(Tm):
             ("start", 0, 0, "_", "_", "_") : {"newState": "start" , "movement": ['R', "R", "S", "S", "S"]},
             ("start", 0, 1, "_", "_", "_") : {"newState": "start" , "movement": ['R', "S", "S", "S", "S"]},
             ("start", 1, 0, "_", "_", "_") : {"newState": "start" , "movement": ['S', "R", "S", "S", "S"]},
+
+            
 
             # ("start", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
             # ("start", 0, 1, "_", "_", "_") : {"newState": "initM", "write": [0, 1, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
@@ -115,38 +124,106 @@ class Division(Tm):
         """
         * tapes[2] = a%b
         * tapes[4] = a//b
+            returns the steps of the machine
         """
+        
+        steps = []
         while self.currentState != self.acc:
             if self.currentState == "sub":
-               Subtraction([self.tapes[2], self.tapes[1], self.tapes[3]]).runMachine() # r = m -b
-               self.pos[3] = getHeadIndex(self.tapes[3]) #set the position of the r tape
-               self.step()
+               
+                subMachine = Subtraction([self.tapes[2], self.tapes[1], self.tapes[3]])
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(subMachine.tapes),
+                }
+                sts = subMachine.runMachine() # r = m -b
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 3,
+                    "tape": self.tapes[3].copy()
+                }
+                steps.append(step)
+
+                self.pos[3] = getHeadIndex(self.tapes[3]) #set the position of the r tape
+                
+                
+                step = self.step()
+                steps.append(step)
             
             elif self.currentState == "check":
                 Tm.emptyTape(self.tapes[3]) #clear the tape of r
-                self.step()
+
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 3,
+                    "tape": self.tapes[3].copy()
+                }
+                steps.append(step)
+                
+                step = self.step()           
+                steps.append(step)
 
             elif self.currentState == "copyR":
                 Tm.copyTape(self.tapes[3], self.tapes[2]) #m = r
+
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(step)
+
                 self.pos[2] = getLastCharIndex(self.tapes[2]) #set the position of the m tape
-                self.step()
+
+                
+                step = self.step()
+                steps.append(step)
 
             elif self.currentState == "addMinus":
                 self.currentState = "start"
-                self.runMachine()
+                sts = self.runMachine()
+                steps.extend(sts)
+
                 # m = b - a%b = b -m
-                Subtraction([self.tapes[1], self.tapes[2],  self.tapes[2]]).runMachine()
+                subMachine = Subtraction([self.tapes[1], self.tapes[2],  self.tapes[2]])
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(subMachine.tapes),
+                }
+                sts = subMachine.runMachine()
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                step = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(step)
+
                 break
 
             else:
-                self.step()
+                step = self.step()
+                steps.append(step)
         
-        self.checkZero(4)
+        if self.checkZero(4):
+            step = {
+                "action": "updateTape",
+                "tape_index": 4,
+                "tape": self.tapes[4].copy()
+            }
+            steps.append(step)
+
+        return steps
 
 
         
         # [0: a, 1: b, 2: m, 3: r, 4: d]
-    def getRemainderTape(self):
+    def getRemainder(self):
         return self.tapes[2]
     
     def getQuotient(self):

@@ -1,10 +1,12 @@
 from tm2 import Tm
 from utils2 import getHeadIndex
 from .addition import Addition
+import copy 
 
 def complement(a: list):
     """
     gets a tape of a machine as an argument and changes it inplace to its Two's complement
+        - returns the steps list of the machine
     """
 
     deltaTable = {
@@ -16,11 +18,32 @@ def complement(a: list):
     pos = [getHeadIndex(a)]
     currentState = "xor"
 
+    steps = []
     while currentState != "acc":
         if currentState == "add":
-            addMachine = Addition([a.copy(), [1], a])
-            addMachine.runMachine()
+            tapes = [a.copy(), [1], a]
+            addMachine = Addition(tapes)  # Create the addMachine first
+
+            subMachibeStep = {
+                "action": "submachine",
+                "tapes": copy.deepcopy(addMachine.tapes)
+            }
+            sts = addMachine.runMachine()
+            subMachibeStep["steps"] = sts
+            steps.append(subMachibeStep)
+
+            # Add the updateTapeStep right after the subMachineStep is appended
+            updateTapeStep = {
+                "action": "updateTape",
+                "tape_index": 0,
+                "tape": a.copy()
+            }
+            steps.append(updateTapeStep)
+
             currentState = "acc"
         
         else:
-            currentState = Tm.staticStep([a], currentState, deltaTable, pos)
+            currentState, step = Tm.staticStep([a], currentState, deltaTable, pos)
+            steps.append(step)
+
+    return steps

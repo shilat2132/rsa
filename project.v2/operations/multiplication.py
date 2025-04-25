@@ -2,6 +2,7 @@ from itertools import product
 from tm2 import Tm
 from utils2 import getHeadIndex
 from .addition import Addition
+import copy
 
 class Multiplication(Tm):
 
@@ -116,26 +117,58 @@ class Multiplication(Tm):
     def addMinus(self):
         """
         computes regular multiplication and adds the '-' in the end
+            - returns the steps list
         """
 
-        self.runMachine()
+        steps = self.runMachine()
         self.pos[2] = getHeadIndex(self.tapes[2]) #set the head of the result tape to the start
         self.currentState = "msb"
 
         while self.currentState != self.acc:
-            self.step()
+            step = self.step()
+            steps.append(step)
+        
+        return steps
 
 
     def runMachine(self):
+        """
+        runs the multiplication machine with consideration of the '-' sign
+            - returns the steps list
+        """
+
+        steps = []
+            
         # tapes = [a, b, y], compute: y = a*b
         while self.currentState != self.acc:
             if self.currentState == "minus":
                 self.currentState = "start"
-                self.addMinus()
+                sts = self.addMinus()
+                steps.extend(sts)
                 break
 
             if self.currentState == "add":
-                t = self.tapes[2].copy() # t= y
-                Addition([t, self.tapes[0].copy(), self.tapes[2]]).runMachine() #y= a+y
-            
-            self.step()
+                # t = self.tapes[2].copy() # t= y
+                tapes = [self.tapes[2], self.tapes[0], self.tapes[2]]
+                addMachine = Addition(tapes)  # Create the addMachine first
+
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(addMachine.tapes)  # Use addMachine.tapes
+                }
+                sts = addMachine.runMachine()  # y = a + y
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                # Add the updateTapeStep right after the subMachineStep is appended
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
+            step = self.step()
+            steps.append(step)
+
+        return steps

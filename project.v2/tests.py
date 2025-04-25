@@ -1,3 +1,4 @@
+from turtle import st
 from operations.addition import Addition
 from operations.multiplication import Multiplication
 from operations.complement import complement
@@ -5,64 +6,99 @@ from operations.subtraction import Subtraction
 from operations.division import Division
 from methods.squere import Squere
 from RSA import RSA
+import time
+from operations.complement import complement
 
 from methods.phi import phiN
 
 from methods.euclidis import Euclid
-from utils2 import binaryToDecimal
+from utils2 import binaryToDecimal, decimalToBinaryList, print_steps
 
 
-def decimalToBinaryList(num, minus = False):
-    a = bin(num)[2:]
-    a = list(a)
-    a = [int(c) for c in a]
-    if minus:
-        a.insert(0, "-")
-    
-    return a
 
-p = decimalToBinaryList(37)
-q = decimalToBinaryList(41)
-b = decimalToBinaryList(31)
 
-r = RSA(p, q, b)
-print(r)
+p = decimalToBinaryList(3)
+q = decimalToBinaryList(5)
+b = decimalToBinaryList(3)
 
-# phi = phiN([decimalToBinaryList(103), decimalToBinaryList(101)])
+r= RSA(p, q, b)
+r.getKeyGenerationSteps()
+main_steps = r.encrypt(4)
+print_steps(main_steps["steps"])
 
+# r.decrypt(10642)
+
+
+# phi
+# phi = []
+# steps = phiN([decimalToBinaryList(2), decimalToBinaryList(3), phi])
+# print_steps(steps)
 # print(binaryToDecimal(phi))
 
-a = decimalToBinaryList(13, True)
-b = decimalToBinaryList(26)
+# a = decimalToBinaryList(5)
+# b = decimalToBinaryList(2)
+
+# complement
+# steps  = complement(a)
+# print_steps(steps)
+
+# print(a)
 
 # div and remainder
+# start = time.perf_counter()
+
 # divMachine = Division([a, b])
-# divMachine.runMachine()
+# steps = divMachine.runMachine()
+# print_steps(steps)
+
 # print(divMachine)
 
+# end = time.perf_counter()
+# print(f"Time taken: {end - start} seconds")
+
 # subtraction
+# start = time.perf_counter()
+
 # subMachine = Subtraction([a, b])
 # subMachine.runMachine()
-# print(subMachine)
+# end = time.perf_counter()
 
+# print(subMachine)
+# print(f"Time taken: {end - start} seconds")
+
+
+# euclid
+# a = decimalToBinaryList(7)
+# b = decimalToBinaryList(3)
 # e = Euclid([a, b])
-# e.runMachine()
+# steps = e.runMachine()
+# print_steps(steps)
+
 # print(f"gcd =  {binaryToDecimal(e.d())}")
 # print(f"s = {binaryToDecimal(e.s())}")
 # print(f"t =  {binaryToDecimal(e.t())}")
 
 
 # add
+# a = decimalToBinaryList(2)
+# b = decimalToBinaryList(3)
 # addMachine = Addition([a, b])
-# addMachine.runMachine()
-# print(addMachine)
+# steps = addMachine.runMachine()
+# print_steps(steps)
 
 # mul
-# a = decimalToBinaryList(13)
-# b = decimalToBinaryList(2, True)
+# a = decimalToBinaryList(2, True)
+# b = decimalToBinaryList(2)
 
+# start = time.perf_counter()
 # mulMacine = Multiplication([a, b])
-# mulMacine.runMachine()
+# steps = mulMacine.runMachine()
+# print_steps(steps)
+
+# print(mulMacine)
+
+# end = time.perf_counter()
+# print(f"Time taken: {end - start} seconds")
 # print(mulMacine)
 
 # complement
@@ -71,15 +107,13 @@ b = decimalToBinaryList(26)
 
 
 
-
-
-
-
 # squere
-# x = decimalToBinaryList(6789)
-# b = decimalToBinaryList(34)
-# n = decimalToBinaryList(54321)
+# x = decimalToBinaryList(2)
+# b = decimalToBinaryList(2)
+# n = decimalToBinaryList(2)
 
 # squereMachine = Squere([x, b, n])
-# squereMachine.runMachine()
-# print(squereMachine)
+# steps = squereMachine.runMachine()
+# print_steps(steps)
+
+# print(squereMachine.result())

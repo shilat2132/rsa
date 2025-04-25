@@ -1,9 +1,9 @@
-from itertools import product
 from operations.division import Division
 from operations.multiplication import Multiplication
 from operations.subtraction import Subtraction
 from tm2 import Tm
-from utils2 import getHeadIndex, isZero
+from utils2 import isZero
+import copy
 
 
 class Euclid(Tm):
@@ -24,23 +24,7 @@ class Euclid(Tm):
             ("start", 0, 1, "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": [0, 1, 1, "_", "_", 1, "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
             ("start", 1, 0, "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": [1, 0, 1, "_", "_", 1, "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
             ("start", 1, 1, "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": [1, 1, 1, "_", "_", 1, "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]},
-            # ("start", "-", "1", "_", "_", "_", "_", "_", "_"): {"newState": "computeQ", "write": ["-", "1", "1", "_", "_", "1", "_", "_"], "movement": ["S", "S", "S", "S", "S", "S", "S", "S"]}
         }
-
-
-
-        # # all the transitions to check whether r(i) == 0 or not, all of the other tapes can have any of the characters [0, 1, -] in the head, 
-        # # but the tape of q and the tape of m which are _ because they were emptied earlier
-        # for combo in product()([0, 1, '-'], repeat=6):  # 
-        #     c1 = (combo[0], "_") + combo[1:]
-        #     c1 = combo + ("_", "_") #adding the spaces of tape q, and m
-        #     # checkCond -> computeQ/ acc
-        #     deltaTable[("checkCond", *combo)] = {
-        #         # if r(i) != 1
-        #         "newState": "checkCond" if combo[1] == 0 else "updateY",
-        #         "movement": ['S', 'L', 'S', 'S', 'S']
-        #     }
-
 
         super().__init__(tapes, "start", deltaTable, 8)
         self.tapesDict= {
@@ -62,155 +46,176 @@ class Euclid(Tm):
         self.ring2 = tapes[1].copy() #b
 
     def runMachine(self):
+        """ returns the steps list of the machine """
+        steps = []
         while self.currentState != "acc":
             if self.currentState == "computeQ":
-                # q = r(i-1)// ri
+                # q = r(i-1) // r(i)
                 d = Division([self.tapes[0], self.tapes[1]])
-                d.runMachine()
-                
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "q = r(i-1) // r(i)",
+                    "tapes": copy.deepcopy(d.tapes)
+                }
+                sts = d.runMachine()
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
                 # copy quotient to q
                 Tm.copyTape(d.getQuotient(), self.tapes[6])
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 6,
+                    "tape": self.tapes[6].copy()
+                }
+                steps.append(updateTapeStep)
 
                 self.currentState = "r"
 
-            
             if self.currentState == "r":
-                # rip1 = rim1 - q* ri
-                Euclid.Rst(self.tapes[0], self.tapes[1], self.tapes[6], self.tapes[7])
+                # r(i+1) = r(i-1) - q * r(i)
+                tapes = [self.tapes[0], self.tapes[1], self.tapes[6], self.tapes[7]]
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "r(i+1) = r(i-1) - q * r(i)",
+                    "tapes": copy.deepcopy(tapes)
+                }
+                rstSteps = Euclid.Rst(*tapes)
+                subMachineStep["steps"] = rstSteps
+                steps.append(subMachineStep)
+
+               
+
                 self.currentState = "s"
-            
+
             if self.currentState == "s":
-                # sip1 = sim1 - q* si
-                Euclid.Rst(self.tapes[2], self.tapes[3], self.tapes[6], self.tapes[7])
+                # s(i+1) = s(i-1) - q * s(i)
+                tapes = [self.tapes[2], self.tapes[3], self.tapes[6], self.tapes[7]]
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "s(i+1) = s(i-1) - q * s(i)",
+                    "tapes": copy.deepcopy(tapes)
+                }
+                rstSteps = Euclid.Rst(*tapes)
+                subMachineStep["steps"] = rstSteps
+                steps.append(subMachineStep)
+
+               
+
                 self.currentState = "t"
 
             if self.currentState == "t":
-                # tip1 = tim1 - q* ti
-                Euclid.Rst(self.tapes[4], self.tapes[5], self.tapes[6], self.tapes[7])
+                # t(i+1) = t(i-1) - q * t(i)
+                tapes = [self.tapes[4], self.tapes[5], self.tapes[6], self.tapes[7]]
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "t(i+1) = t(i-1) - q * t(i)",
+                    "tapes": copy.deepcopy(tapes)
+                }
+                rstSteps = Euclid.Rst(*tapes)
+                subMachineStep["steps"] = rstSteps
+                steps.append(subMachineStep)
 
                 self.currentState = "checkCond"
 
             if self.currentState == "checkCond":
                 Tm.emptyTape(self.tapes[6])
-                
-                if isZero(self.tapes[1]) == True:
+
+                # it's always after the change of t so update machine step is here instead of in the 2 of them
+                updateMachineStep = {
+                    "action": "updateMachine",
+                    "tapes": copy.deepcopy(self.tapes)
+                }
+                steps.append(updateMachineStep)
+
+                if isZero(self.tapes[1]):
                     self.currentState = "acc"
                 else:
                     self.currentState = "computeQ"
-            
+
             else:
-                self.step()
-                
+                step = self.step()
+                steps.append(step)
 
+        # keep s and t in their proper ring: s*a + t*b -> s should be in ring b (ring 2) and t should be in ring a (ring 1)
+        sIndex = self.tapesDict["s(i-1)"]
+        tIndex = self.tapesDict["t(i-1)"]
 
+        divMachine = Division([self.tapes[sIndex], self.ring2])  # s % b
+        subMachineStep = {
+            "action": "submachine",
+            "tapes": copy.deepcopy(divMachine.tapes)
+        }
+        sts = divMachine.runMachine()
+        subMachineStep["steps"] = sts
+        steps.append(subMachineStep)
 
+        self.tapes[sIndex] = divMachine.getRemainder()
+        updateTapeStep = {
+            "action": "updateTape",
+            "tape_index": sIndex,
+            "tape": self.tapes[sIndex].copy()
+        }
+        steps.append(updateTapeStep)
 
-    # def runEuclidAbstract(self):
-    #     """
-    #     runs the euclidis machine abstracttly
-    #     """
-    #     config = Tm.config(self.tapes, self.currentState, self.pos) + "\n"
-    #     self.step() #assigns the initializes values of the euclid algorithm
-    #     config+= Tm.config(self.tapes, self.currentState, self.pos) + "\n"
+        divMachine = Division([self.tapes[tIndex], self.ring1])  # t % a
+        subMachineStep = {
+            "action": "submachine",
+            "tapes": copy.deepcopy(divMachine.tapes)
+        }
+        sts = divMachine.runMachine()
+        subMachineStep["steps"] = sts
+        steps.append(subMachineStep)
 
-    #     while self.currentState != "acc":
-    #         # currentState= computeQ
-    #         qMachine = divMachine([self.tapes[self.tapesDict["r(i-1)"]], self.tapes[self.tapesDict["r(i)"]]]) #q = r(i-1) // r(i)
-    #         config+=qMachine.runMachine()
-    #         config+=Tm.copyTape(qMachine.resultTape(), self.tapes[self.tapesDict["q"]])
+        self.tapes[tIndex] = divMachine.getRemainder()
+        updateTapeStep = {
+            "action": "updateTape",
+            "tape_index": tIndex,
+            "tape": self.tapes[tIndex].copy()
+        }
+        steps.append(updateTapeStep)
 
-    #         self.currentState = "r"
-    #         config+=Euclid.Rst(self.tapes[self.tapesDict["r(i-1)"]],
-    #                  self.tapes[self.tapesDict["r(i)"]], 
-    #                  self.tapes[self.tapesDict["q"]], 
-    #                  self.tapes[self.tapesDict["m"]])
-            
-    #         self.currentState = "s"
-    #         config+=Euclid.Rst(self.tapes[self.tapesDict["s(i-1)"]],
-    #                  self.tapes[self.tapesDict["s(i)"]], 
-    #                  self.tapes[self.tapesDict["q"]], 
-    #                  self.tapes[self.tapesDict["m"]])
-            
-    #         self.currentState = "t"
-    #         config+= Euclid.Rst(self.tapes[self.tapesDict["t(i-1)"]],
-    #                  self.tapes[self.tapesDict["t(i)"]], 
-    #                  self.tapes[self.tapesDict["q"]], 
-    #                  self.tapes[self.tapesDict["m"]])
-            
-    #         self.currentState = "emptyQ"
-    #         config+=Tm.emptyTape(self.tapes[self.tapesDict["q"]])
-
-    #         rHead = getHeadIndex(self.tapes[1])
-    #         if self.tapes[1][rHead] == "_":
-    #             self.currentState = "acc"
-    #         else: self.currentState = "computeQ"
-
-    #     # compute t and s in the Z ring of the original number given in the second tape(for example Z 26)
-    #         # it would be done using the remainder machine
-    #         # sa+tb=d
-    #     tape1S = self.tapes[self.tapesDict['s(i-1)']]
-    #     tape2S = self.ring2
-    #     remainderMachineS = remainderMachine([tape1S, tape2S]) #s%b
-    #     config+=remainderMachineS.runMachine()
-    #     config+=Tm.copyTape(remainderMachineS.tapes[2], self.tapes[self.tapesDict['s(i-1)']]) #s = s%b
-
-
-    #     tape1T = self.tapes[self.tapesDict['t(i-1)']]
-    #     tape2T = self.ring1
-    #     remainderMachineT = remainderMachine([tape1T, tape2T]) #t%a
-    #     config+=remainderMachineT.runMachine()
-    #     config+=Tm.copyTape(remainderMachineT.tapes[2], self.tapes[self.tapesDict['t(i-1)']]) #t = t%a
-
+        return steps
 
     def Rst(vim1: list, vi: list, q: list, m: list):
         """
         computes: v(i+1) = v(i-1)+qi*vi, while the v is r, s or t of the euclides algorithm
-        returns: the configuration string
+        returns: the steps list
         """
-        Multiplication([vi, q, m]).runMachine() # m = q*vi
-        Subtraction([vim1, m, m]).runMachine() # m = vim1 - m = vim1 - q*vi
+        steps = []
 
-        # vim1, vi = vi, vi+1
+        # Multiplication: m = q * vi
+        tapes = [vi, q, m]
+        mulMachine = Multiplication(tapes)
+        subMachineStep = {
+            "action": "submachine",
+            "tapes": copy.deepcopy(mulMachine.tapes)
+        }
+        sts = mulMachine.runMachine()
+        subMachineStep["steps"] = sts
+        steps.append(subMachineStep)
+
+        # Subtraction: m = vim1 - m = vim1 - q * vi
+        tapes = [vim1, m, m]
+        subMachine = Subtraction(tapes)
+        subMachineStep = {
+            "action": "submachine",
+            "tapes": copy.deepcopy(subMachine.tapes)
+        }
+        sts = subMachine.runMachine()
+        subMachineStep["steps"] = sts
+        steps.append(subMachineStep)
+
+        # Copy vim1 <- vi
         Tm.copyTape(vi, vim1)
+
+        # Copy vi <- m
         Tm.copyTape(m, vi)
 
+        # Empty m
         Tm.emptyTape(m)
 
-        # qvMachine = mulMachine([q, vi])
-        # config = qvMachine.runMachine() 
-        # config+=Tm.copyTape(qvMachine.result(), m) #m = q*vi
-
-        # # v(i-1) = v(i-1) - q*v(i)
-        # config+= subMachine(vim1, m)
-
-        
-        # config+=Tm.copyTape(vim1, m) # m = v(i-1)
-        # config+=Tm.copyTape(vi, vim1) #v(i-1) = v(i)
-        # config+=Tm.copyTape(m, vi) # v(i) = m = v(i-1) - q*v(i)
-        # config+=Tm.emptyTape(m)
-
-        # return config
-
-    
-    # def Rst(vim1: list, vi: list, q: list, m: list):
-    #     """
-    #     computes: v(i+1) = v(i-1)+qi*vi, while the v is r, s or t of the euclides algorithm
-    #     returns: the configuration string
-    #     """
-    #     qvMachine = mulMachine([q, vi])
-    #     config = qvMachine.runMachine() 
-    #     config+=Tm.copyTape(qvMachine.result(), m) #m = q*vi
-
-    #     # v(i-1) = v(i-1) - q*v(i)
-    #     config+= subMachine(vim1, m)
-
-        
-    #     config+=Tm.copyTape(vim1, m) # m = v(i-1)
-    #     config+=Tm.copyTape(vi, vim1) #v(i-1) = v(i)
-    #     config+=Tm.copyTape(m, vi) # v(i) = m = v(i-1) - q*v(i)
-    #     config+=Tm.emptyTape(m)
-
-    #     return config
+        return steps
 
     def d(self):
         return self.tapes[0]

@@ -1,8 +1,11 @@
 from itertools import product
+from turtle import st
 from tm2 import Tm
 from utils2 import getHeadIndex
 from .complement import complement
 from .addition import Addition
+import copy
+
 
 class Subtraction(Tm):
    
@@ -76,6 +79,9 @@ class Subtraction(Tm):
             # zeros -> comp1
             ("zeros", "_", "_", "_") : {"newState": "comp1" , "movement": ['R', "S", "S"]},
 
+           
+
+
 
             # carry -> carry
             ("carry", 0, "_", 0) : {"newState": "carry", "movement": ['R', "S", "R"]},
@@ -142,12 +148,12 @@ class Subtraction(Tm):
         }
 
 
-        # for combo in product([0, 1], repeat=3):  
-        #     # ("goLeft", 0, 0, 0) : {"newState": "addMinus", "movement": ['L', "L", "L"]},
-        #     deltaTable[("goLeft", *combo)] = {
-        #         "newState": "addMinus",
-        #         "movement": ['L', 'L', 'L']
-        #     }
+        for combo in product([0, 1, "_"], repeat=3):  
+             # add1 -> carry: make sure that before checking the carry, the b tape would be on the "_" on the left of the tape
+            deltaTable[("add1", *combo)] = {
+                "newState": "carry",
+                "movement": ['S', 'L', 'S']
+            }
        
 
         super().__init__(tapes, "s", deltaTable, 3)
@@ -156,50 +162,168 @@ class Subtraction(Tm):
 
     
     def runMachine(self):
+        steps = []
         while self.currentState != self.acc:
             if self.currentState == "comp1":
-                complement(self.tapes[1]) #converts b to its two's complement
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(self.tapes[1])
+                }
+                sts = complement(self.tapes[1])  # converts b to its two's complement
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 1,
+                    "tape": self.tapes[1].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.currentState = "add1"
 
-            
             elif self.currentState == "add1":
                 addMachine = Addition(self.tapes)
-                addMachine.runMachine() # c = a + b' (b' is the two's complement of b)
-                self.pos[2] = getHeadIndex(self.tapes[2]) #updates the position of tape c
-                # at this point a and c tapes are both positioned at the beginning of the numbers. 
+
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(addMachine.tapes)
+                }
+
+                sts = addMachine.runMachine()  # c = a + b' (b' is the two's complement of b)
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
+                self.pos[2] = getHeadIndex(self.tapes[2])  # updates the position of tape c
+                # at this point a and c tapes are both positioned at the beginning of the numbers.
                 # in the carry's state we would want to compare their lengths
+                self.pos[1] = getHeadIndex(self.tapes[1])
 
+                step = self.step()  # would move the b tape to a "_" before the first character for the carry checking
+                steps.append(step)
 
-                self.currentState = "carry"
-
-            
             elif self.currentState == "compResult":
-                complement(self.tapes[2])
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(self.tapes[2])
+                }
+
+                sts = complement(self.tapes[2])
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.pos[2] = getHeadIndex(self.tapes[2])
-                self.step()
+
+                step = self.step()
+                steps.append(step)
 
             elif self.currentState == "add2":
-                Addition(self.tapes).runMachine() #c = a+b
+                addMachine = Addition(self.tapes)
+
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(addMachine.tapes)
+                }
+
+                sts = addMachine.runMachine()  # c = a + b
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.pos[2] = getHeadIndex(self.tapes[2])
-                self.step()
-            
+                step = self.step()
+                steps.append(step)
+
             elif self.currentState == "add3":
-                Addition(self.tapes).runMachine() #c = a+b
+                addMachine = Addition(self.tapes)
+
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(addMachine.tapes)
+                }
+
+                sts = addMachine.runMachine()  # c = a + b
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.currentState = "acc"
-            
+
             elif self.currentState == "minus":
-                Subtraction([self.tapes[1], self.tapes[0], self.tapes[2]]).runMachine() # c = b - a 
+                subMachine = Subtraction([self.tapes[1], self.tapes[0], self.tapes[2]])
+
+                subMachineStep = {
+                    "action": "submachine",
+                    "tapes": copy.deepcopy(subMachine.tapes)
+                }
+
+                sts = subMachine.runMachine()  # c = b - a
+                subMachineStep["steps"] = sts
+                steps.append(subMachineStep)
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.currentState = "acc"
 
             elif self.currentState == "copyA":
-                Tm.copyTape(self.tapes[0], self.tapes[2]) #copy a to the result when it's a-0
+                Tm.copyTape(self.tapes[0], self.tapes[2])  # copy a to the result when it's a-0
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.currentState = "acc"
 
             elif self.currentState == "copyB":
-                Tm.copyTape(self.tapes[1], self.tapes[2]) #copy b to the result and add - in the end in case of 0-b
+                Tm.copyTape(self.tapes[1], self.tapes[2])  # copy b to the result and add - in the end in case of 0-b
+
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.pos[2] = getHeadIndex(self.tapes[2])
                 self.currentState = "goLeft"
 
             else:
-                self.step()
-                
+                step = self.step()
+                steps.append(step)
+
+        return steps
+

@@ -1,8 +1,10 @@
+from turtle import st
 from operations.multiplication import Multiplication
 from operations.division import Division
 from tm2 import Tm
-
+from utils2 import binaryToDecimal
 from itertools import product
+import copy
 
 
 class Squere(Tm):
@@ -60,7 +62,7 @@ class Squere(Tm):
             ("q0", 0, "_", 0, "_", 0) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
             ("q0", 0, "_", 1, "_", 0) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
             ("q0", 1, "_", 0, "_", 0) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
-            ("q0", 1, "_", 1, "_", 0) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("q0", 1, "_", 1, "_", 0) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S'],},
 
             ("q0", 0, "_", 0, "_", 1) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
             ("q0", 0, "_", 1, "_", 1) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
@@ -142,48 +144,99 @@ class Squere(Tm):
 
     
     def runMachine(self):
-        # self.tapes = [x, b, n, m, y]
+        """
+        Runs the exponentiation by squaring machine.
+        returns the steps list.
+        """
+        steps = []
+
         while self.currentState != "acc":
-            
             if self.currentState == "remainder0":
-                tapes = [self.tapes[0], self.tapes[2], self.tapes[4]] #tapes = [x, n, y]
-                Division(tapes).runMachine()
+                # compute y = x % n
+                divMachine = Division([self.tapes[0], self.tapes[2], self.tapes[4]])  # Division machine for y = x % n
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "y = x % n",
+                    "tapes": copy.deepcopy(divMachine.tapes)
+                }
+                divisionSteps = divMachine.runMachine()
+                subMachineStep["steps"] = divisionSteps
+                steps.append(subMachineStep)
+
                 self.currentState = "initM"
 
             elif self.currentState == "copyM":
-                Tm.copyTape(self.tapes[0], self.tapes[3]) # m = x
+                # m = x
+                Tm.copyTape(self.tapes[0], self.tapes[3])
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 3,
+                    "tape": self.tapes[3].copy()
+                }
+                steps.append(updateTapeStep)
+
                 self.currentState = "loop"
 
             elif self.currentState == "loop":
-                
                 # raise m to the power of 2
                 t = self.tapes[3]
-                Multiplication([t, t, t]).runMachine() #m = m^2
-                
+                mulMachine = Multiplication([t, t, t])  # Multiplication machine for m = m^2
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "m = m^2",
+                    "tapes": copy.deepcopy(mulMachine.tapes)
+                }
+                multiplicationSteps = mulMachine.runMachine()
+                subMachineStep["steps"] = multiplicationSteps
+                steps.append(subMachineStep)
 
                 # compute the mod of m^2
-                tapes = [self.tapes[3].copy(), self.tapes[2], self.tapes[3]] #tapes = [m, n, m]
-                Division(tapes).runMachine() #m = m%n
+                divMachine = Division([self.tapes[3], self.tapes[2], self.tapes[3]])  # Division machine for m = m % n
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "m = m % n",
+                    "tapes": copy.deepcopy(divMachine.tapes)
+                }
+                divisionSteps = divMachine.runMachine()
+                subMachineStep["steps"] = divisionSteps
+                steps.append(subMachineStep)
 
-                self.step() #activate the transition in the delta table
-            
-            elif self.currentState=="updateY":
-                    # compute y = (y*m)%n
-                # compute y=y*m
-                tapes = [self.tapes[4], self.tapes[3], self.tapes[4]] #tapes = [y, m, y]
-                Multiplication(tapes).runMachine() #y = y*m
-               
+                # Log the step transition
+                step = self.step()  # Activate the transition in the delta table
+                steps.append(step)
 
-                # compute y = y%n
-                tapes = [self.tapes[4].copy(), self.tapes[2], self.tapes[4]] #tapes = [y, n, y]
-                Division(tapes).runMachine() #y = y%n
-               
+            elif self.currentState == "updateY":
+                # compute y = (y * m) % n
+                # compute y = y * m
+                mulMachine = Multiplication([self.tapes[4], self.tapes[3], self.tapes[4]])  # Multiplication machine for y = y * m
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "y = y * m",
+                    "tapes": copy.deepcopy(mulMachine.tapes)
+                }
+                multiplicationSteps = mulMachine.runMachine()
+                subMachineStep["steps"] = multiplicationSteps
+                steps.append(subMachineStep)
+
+                # compute y = y % n
+                divMachine = Division([self.tapes[4], self.tapes[2], self.tapes[4]])  # Division machine for y = y % n
+                subMachineStep = {
+                    "action": "submachine",
+                    "formula": "y = y % n",
+                    "tapes": copy.deepcopy(divMachine.tapes)
+                }
+                divisionSteps = divMachine.runMachine()
+                subMachineStep["steps"] = divisionSteps
+                steps.append(subMachineStep)
+
                 self.currentState = "checkCond"
-            
+
             else:
-                self.step()
+                # Log the step transition
+                step = self.step()  # Activate the transition in the delta table
+                steps.append(step)
 
-
+        return steps
     def result(self):
         return self.tapes[4]
 

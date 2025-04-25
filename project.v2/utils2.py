@@ -1,3 +1,20 @@
+def print_steps(steps, indent=0):
+    for step in steps:
+        if step.get("action") == "submachine" or step.get("action") == "main":  # Handle "submachine" separately
+            print(" " * indent + "Submachine:")
+            if step.get("formula"): print(" " * indent + f"formula: {step['formula']}")
+            print(" " * indent + f"tapes: {step['tapes']}")
+            print(" " * indent + "Steps:")
+            # Recursively print the nested steps with increased indentation
+            print_steps(step["steps"], indent + 4)
+
+        else:
+            # Print the current step with indentation
+            print(" " * indent + str(step))
+
+
+
+
 def getHeadIndex(tape: list)-> int:
     """
     given a tape (list), return the index of the first character that's different from "_".
@@ -11,6 +28,14 @@ def getHeadIndex(tape: list)-> int:
             break
     return head
 
+def decimalToBinaryList(num, minus = False):
+    a = bin(num)[2:]
+    a = list(a)
+    a = [int(c) for c in a]
+    if minus:
+        a.insert(0, "-")
+    
+    return a
 
 # def getHeadIndex(tape: list)-> int:
 #     """
