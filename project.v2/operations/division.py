@@ -23,6 +23,10 @@ class Division(Tm):
             for t in range(2, len(tapes)):
                 tapes[t].clear()
         deltaTable = {
+            # start -> acc
+            ("start", "_", 0, "_", "_", "_") : {"newState": "acc" , "write": ["_", 0, 0, "_", 0], "movement": ['S', "S", "S", "S", "S"]},
+             ("start", "_", 1, "_", "_", "_") : {"newState": "acc" , "write": ["_", 1, 0, "_", 0] , "movement": ['S', "S", "S", "S", "S"]},
+
             #start -> addMinus
             ("start", "-", 0, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 0, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
             ("start", "-", 1, "_", "_", "_") : {"newState": "addMinus", "write": ["_", 1, "_", "_", "-"] , "movement": ['R', "S", "S", "S", "R"]},
@@ -33,6 +37,8 @@ class Division(Tm):
             ("start", 0, 0, "_", "_", "_") : {"newState": "start" , "movement": ['R', "R", "S", "S", "S"]},
             ("start", 0, 1, "_", "_", "_") : {"newState": "start" , "movement": ['R', "S", "S", "S", "S"]},
             ("start", 1, 0, "_", "_", "_") : {"newState": "start" , "movement": ['S', "R", "S", "S", "S"]},
+
+            
 
             # ("start", 0, 0, "_", "_", "_") : {"newState": "initM", "write": [0, 0, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},
             # ("start", 0, 1, "_", "_", "_") : {"newState": "initM", "write": [0, 1, 0, "_", "_"] , "movement": ['R', "R", "R", "S", "S"]},

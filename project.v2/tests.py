@@ -22,9 +22,10 @@ q = decimalToBinaryList(5)
 b = decimalToBinaryList(3)
 
 r= RSA(p, q, b)
-main_steps = r.getKeyGenerationSteps()
+r.getKeyGenerationSteps()
+main_steps = r.encrypt(4)
 print_steps(main_steps["steps"])
-# # r.encrypt(2468)
+
 # r.decrypt(10642)
 
 
@@ -107,15 +108,12 @@ print_steps(main_steps["steps"])
 
 
 # squere
-# x = decimalToBinaryList(6789)
-# b = decimalToBinaryList(341)
-# n = decimalToBinaryList(54321)
+# x = decimalToBinaryList(2)
+# b = decimalToBinaryList(2)
+# n = decimalToBinaryList(2)
 
-# start = time.perf_counter()
 # squereMachine = Squere([x, b, n])
-# squereMachine.runMachine()
+# steps = squereMachine.runMachine()
+# print_steps(steps)
 
-# end = time.perf_counter()
-# print(f"Time taken: {end - start} seconds")
-
-# print(squereMachine)
+# print(squereMachine.result())

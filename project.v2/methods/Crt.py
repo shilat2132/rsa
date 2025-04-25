@@ -30,16 +30,16 @@ class Crt(Tm):
             "result": self.tapes[8]
         }
 
-        def printCurrentMachine():
-            machine = ""
-            for k, v in tapesDict.items():
-                num = binaryToDecimal(v)
-                machine += f"{k}: {str(v)}, the number in this tape:  {str(num) } \n"
+        # def printCurrentMachine():
+        #     machine = ""
+        #     for k, v in tapesDict.items():
+        #         num = binaryToDecimal(v)
+        #         machine += f"{k}: {str(v)}, the number in this tape:  {str(num) } \n"
             
-            print(machine)
+        #     print(machine)
 
-        print("The CRT machine tapes at the start:")
-        printCurrentMachine()
+        # print("The CRT machine tapes at the start:")
+        # printCurrentMachine()
 
         # compute M = m1*m2 = M1*M2
         Multiplication([tapesDict["M1"], tapesDict["M2"], tapesDict["M"]]).runMachine()
@@ -57,8 +57,6 @@ class Crt(Tm):
         tapesDict["y2"] = self.tapes[5]
 
 
-        print("The machine after computing M, y1 and y2")
-        printCurrentMachine()
 
         
 
@@ -90,8 +88,6 @@ class Crt(Tm):
         self.tapes[8] = remainder.getRemainder()
         tapesDict["result"] = self.tapes[8]
 
-        print("The machine after computing the sum mod M")
-        printCurrentMachine()
 
     
 

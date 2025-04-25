@@ -42,7 +42,7 @@ class RSA():
         public key: (b, n) -
             * compute n with the multiplication machine
         
-        returns the steps list
+        returns the main step object
         """
         machine_tapes = [self.n, self.phi, self.a]
 
@@ -111,13 +111,48 @@ class RSA():
         return steps
 
     def encrypt(self, x: int):
+        """
+        Encrypts the given integer x using the RSA algorithm.
+        Builds a main step object to log the encryption process.
+        """
+        steps = []
+
+        
+        # Convert x to binary list
         xList = decimalToBinaryList(x)
+        machine_tapes = [xList, self.b, self.n, ["_"]]
+        main_step = {
+            "action": "main",
+            "formula":  f"Encrypt {x}",
+            "tapes": copy.deepcopy(machine_tapes)
+        }
 
+        # Perform squaring operation: y = x^b % n
         square = Squere([xList, self.b, self.n])
-        square.runMachine()
-        print(f"The encrypted value of {x} is: {binaryToDecimal(square.result())}")
+        subMachineStep = {
+            "action": "submachine",
+            "formula": "y = x^b % n",
+            "tapes": copy.deepcopy(square.tapes)
+        }
+        squareSteps = square.runMachine()
+        subMachineStep["steps"] = squareSteps
+        steps.append(subMachineStep)
 
-    
+        # Retrieve the result of the encryption
+        y = square.result()
+        encryptedValue = binaryToDecimal(y)
+
+        updateTapeStep = {
+            "action": "updateTape",
+            "tape_index": 3, 
+            "tape": y.copy()
+        }
+        steps.append(updateTapeStep)
+
+        main_step["steps"] = steps
+
+        print(f"The encrypted value of {x} is: {encryptedValue}")
+        return main_step
 
     def decrypt(self, y: int):
         yList = decimalToBinaryList(y)
