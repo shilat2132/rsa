@@ -23,10 +23,12 @@ b = decimalToBinaryList(3)
 
 r= RSA(p, q, b)
 # r.getKeyGenerationSteps()
-main_steps = r.encrypt(4)
+# main_steps = r.encrypt(4)
 # print_steps(main_steps["steps"])
 
-# r.decrypt(10642)
+main_steps = r.decrypt(4)
+print_steps(main_steps["steps"])
+
 
 
 # phi

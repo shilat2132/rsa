@@ -155,49 +155,107 @@ class RSA():
         return main_step
 
     def decrypt(self, y: int):
+        """
+        Decrypts the given integer y.
+        returns a main step object.
+        """
+        steps = []
+
+        # Convert y to binary list
         yList = decimalToBinaryList(y)
+
+        machine_tapes = [yList, ["_"]]
+        main_step = {
+            "action": "main",
+            "formula": f"Decrypt {y}",
+            "tapes": copy.deepcopy(machine_tapes)
+        }
 
         def xi(v: list):
             """
-            v = p or q
-            compute x1 or x2 for the crt
+             v = p or q
+                Compute x1 or x2 for the CRT:
                 * x = y % v
                 * b = a % (v-1)
                 * n = v
                 * compute x^b mod n = (y mod v)^(a mod (v-1)) % v
-                * 
+                - returns the result and the steps of the submachine.
             """
+            xi_steps = []
+
             # x = y % v
-            xMachine = Division([yList, v]) 
-            xMachine.runMachine()
+            xMachine = Division([yList, v])
+            subMachineStep = {
+                "action": "submachine",
+                "formula": "Compute y % v (v is either p or q)",
+                "tapes": copy.deepcopy(xMachine.tapes)
+            }
+            subMachineStep["steps"] = xMachine.runMachine()
+            xi_steps.append(subMachineStep)
             x = xMachine.getRemainder()
 
-            # minus = v-1
+            # minus = v - 1
             minus = []
-            Subtraction([v, [1], minus ]).runMachine()
+            subtractionMachine = Subtraction([v, [1], minus])
+            subMachineStep = {
+                "action": "submachine",
+                "formula": "Compute v - 1 = p - 1 or q - 1",
+                "tapes": copy.deepcopy(subtractionMachine.tapes)
+            }
+            subMachineStep["steps"] = subtractionMachine.runMachine()
+            xi_steps.append(subMachineStep)
 
-            # b = a % (v-1)
+            # b = a % (v - 1)
             bMachine = Division([self.a, minus])
-            bMachine.runMachine()
+            subMachineStep = {
+                "action": "submachine",
+                "formula": "b = a % (v - 1)",
+                "tapes": copy.deepcopy(bMachine.tapes)
+            }
+            subMachineStep["steps"] = bMachine.runMachine()
+            xi_steps.append(subMachineStep)
             b = bMachine.getRemainder()
 
-            # result = (x^b)% v
+            # result = (x^b) % v
             square = Squere([x, b, v])
-            square.runMachine()
+            subMachineStep = {
+                "action": "submachine",
+                "formula": "result = (y%v)^(a%(v-1)) % v",
+                "tapes": copy.deepcopy(square.tapes)
+            }
+            subMachineStep["steps"] = square.runMachine()
+            xi_steps.append(subMachineStep)
             result = square.result()
 
-            return result
+            return result, xi_steps
 
-        x1 = xi(self.p)
-        x2 = xi(self.q)
+        # Compute x1 and x2
+        x1, x1_steps = xi(self.p)
+        steps.extend(x1_steps)
 
+        x2, x2_steps = xi(self.q)
+        steps.extend(x2_steps)
+
+        # Perform CRT to combine x1 and x2
         crtMachine = Crt([x1, x2, self.p, self.q])
-        crtMachine.runMachine()
+        crtStep = crtMachine.runMachine()  # The CRT machine returns its submachine object
+        steps.append(crtStep)
 
+        # Retrieve the decrypted value
         x = crtMachine.getX()
+        decryptedValue = binaryToDecimal(x)
 
-        print(f"The decrypted value of {y} is: {binaryToDecimal(x)}")
-        
+        updateTapeStep = {
+            "action": "updateTape",
+            "tape_index": 1,  
+            "tape": x.copy()
+        }
+        steps.append(updateTapeStep)
+
+        main_step["steps"] = steps
+
+        print(f"The decrypted value of {y} is: {decryptedValue}")
+        return main_step
 
     def __repr__(self):
         """
