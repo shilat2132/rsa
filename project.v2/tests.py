@@ -22,9 +22,9 @@ q = decimalToBinaryList(5)
 b = decimalToBinaryList(3)
 
 r= RSA(p, q, b)
-r.getKeyGenerationSteps()
+# r.getKeyGenerationSteps()
 main_steps = r.encrypt(4)
-print_steps(main_steps["steps"])
+# print_steps(main_steps["steps"])
 
 # r.decrypt(10642)
 
