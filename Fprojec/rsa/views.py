@@ -1,26 +1,38 @@
+import sys
+import os
+
+# הוסף את התיקיה של machines לsys.path
+sys.path.append(os.path.join(os.path.dirname(__file__), 'machines'))
+from utils2 import binaryToDecimal, decimalToBinaryList
+from RSA import RSA
+
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 
+
+
+
 @csrf_exempt
 def key(request):
+    """
+    Generate the public and private keys using the RSA algorithm.
+    """
     if request.method == 'POST':
         data = json.loads(request.body)
-        P = int(data['P'])
-        Q = int(data['Q'])
-        B = int(data['B'])
+        p = int(data['p'])
+        q = int(data['q'])
+        b = int(data['b'])
 
-        N = P * Q
-        phi = (P - 1) * (Q - 1)
+        p = decimalToBinaryList(p)
+        q = decimalToBinaryList(q)
+        b = decimalToBinaryList(b)
 
-        def modinv(a, m):
-            for x in range(1, m):
-                if (a * x) % m == 1:
-                    return x
-            return None
-
-        A = modinv(B, phi)
-        return JsonResponse({'A': A, 'N': N})
+        rsa = RSA(p, q, b)
+        steps, a, n = rsa.getKeyGeneration()
+        print(a)
+        return JsonResponse({'a': a, 'n': n})
 
 @csrf_exempt
 def encription(request):
