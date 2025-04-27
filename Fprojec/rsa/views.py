@@ -37,6 +37,7 @@ def key(request):
 def encryption(request):
     """
     gets the public key (b, n) - both should be tapes. and a number x to encrypt.
+    returns the main_step object and the encrypted tape y.
     """
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -48,15 +49,24 @@ def encryption(request):
 
         rsaEncrypt = RSA(b=b, n=nList)
         main_step, y = rsaEncrypt.encrypt(x)
-        return JsonResponse({'y': y})
+        return JsonResponse({'y': y, "main_step": main_step})
 
 @csrf_exempt
 def decryption(request):
+    """
+    expects the private key (a, p, q) - all should be tapes and n as a tape. and a number y to decrypt.
+    returns the main_step object and the decrypted tape x.
+    """
     if request.method == 'POST':
         data = json.loads(request.body)
-        Y = int(data['Y'])
-        A = int(data['A'])
-        N = int(data['N'])
+        
+        y = int(data['y'])
+        a = data['a'] #list
+        p = data['p']
+        q = data['q']
+        n = data['n']
 
-        X = pow(Y, A, N)  # פענוח: Y^A mod N
-        return JsonResponse({'X': X})
+        rsaDecrypt = RSA(a=a, p=p, q=q, n=n)
+        main_step, x = rsaDecrypt.decrypt(y)
+
+        return JsonResponse({"x": x, "main_step": main_step})

@@ -23,7 +23,7 @@ class RSA():
         supports constructing the object with either:
         - (p, q, b) for generating the keys
         - (b, n) for encrypting
-        - (a, p, q) for decrypting
+        - (a, p, q, n) for decrypting
         """
 
       
@@ -45,10 +45,11 @@ class RSA():
             self.b = b
             self.n = n
         
-        elif a is not None and p is not None and q is not None:
+        elif a is not None and p is not None and q is not None and n is not None:
             self.a = a
             self.p = p
             self.q = q
+            self.n = n
 
         else:
             raise ValueError("Invalid parameters: either (p, q, b) for generation or (b, n) for encryption or (a, p, q) for decryption are required.")
@@ -177,7 +178,7 @@ class RSA():
     def decrypt(self, y: int):
         """
         Decrypts the given integer y.
-        returns a main step object.
+        returns a main step object and the decrypted x list.
         """
         steps = []
 
@@ -275,7 +276,7 @@ class RSA():
         main_step["steps"] = steps
 
         print(f"The decrypted value of {y} is: {decryptedValue}")
-        return main_step
+        return main_step, x
 
     def __repr__(self):
         """
