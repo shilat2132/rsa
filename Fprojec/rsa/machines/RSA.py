@@ -133,8 +133,7 @@ class RSA():
 
     def encrypt(self, x: int):
         """
-        Encrypts the given integer x using the RSA algorithm.
-        Builds a main step object to log the encryption process.
+        returns the main step object of the encryption process and y
         """
         steps = []
 
@@ -173,7 +172,7 @@ class RSA():
         main_step["steps"] = steps
 
         print(f"The encrypted value of {x} is: {encryptedValue}")
-        return main_step
+        return main_step, y
 
     def decrypt(self, y: int):
         """

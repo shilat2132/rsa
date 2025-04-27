@@ -3,6 +3,6 @@ from . import views
 
 urlpatterns = [
     path('keyGeneration/', views.key, name='key'),
-    path('decription/', views.decription, name='decription'),
-    path('encription/', views.decription, name='encription'),
+    path('decryption/', views.decryption, name='decryption'),
+    path('encryption/', views.encryption, name='encryption'),
 ]

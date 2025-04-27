@@ -30,23 +30,28 @@ def key(request):
         b = decimalToBinaryList(b)
 
         rsa = RSA(p, q, b)
-        steps, a, n = rsa.getKeyGeneration()
-        print(a)
-        return JsonResponse({'a': a, 'n': n})
+        steps, n, a = rsa.getKeyGeneration()
+        return JsonResponse({'a': a, 'n': n, 'b': b, 'p': p, 'q': q})
 
 @csrf_exempt
-def encription(request):
+def encryption(request):
+    """
+    gets the public key (b, n) - both should be tapes. and a number x to encrypt.
+    """
     if request.method == 'POST':
         data = json.loads(request.body)
-        X = int(data['X'])
-        B = int(data['B'])
-        N = int(data['N'])
+        x = int(data['x'])
+        b = data['b']
+        nList = data['n']
 
-        Y = pow(X, B, N)  # הצפנה: X^B mod N
-        return JsonResponse({'Y': Y})
+        
+
+        rsaEncrypt = RSA(b=b, n=nList)
+        main_step, y = rsaEncrypt.encrypt(x)
+        return JsonResponse({'y': y})
 
 @csrf_exempt
-def decription(request):
+def decryption(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         Y = int(data['Y'])
