@@ -1,4 +1,5 @@
 from calendar import c
+from math import e
 from methods.phi import phiN
 from methods.euclidis import Euclid
 from methods.Crt import Crt
@@ -16,22 +17,42 @@ import copy
 
 class RSA():
 
-    def __init__(self, p: list, q: list, b: list):
+    def __init__(self, p: list = None, q: list = None, b: list = None, n: list = None, a: list = None):
         """
         Holds the public and private keys of the RSA algorithm.
+        supports constructing the object with either:
+        - (p, q, b) for generating the keys
+        - (b, n) for encrypting
+        - (a, p, q) for decrypting
         """
-        self.x = None
-        self.b = b
-        self.p = p
-        self.q = q
 
-        self.y = None
+      
+
         self.n = []
         self.phi = []
         self.a = []
 
-        # Store the key generation steps temporarily
-        self._key_generation_steps = self.keyGeneration()
+
+
+        if p is not None and q is not None and b is not None:
+            self.b = b
+            self.p = p
+            self.q = q
+            # Store the key generation steps temporarily
+            self._key_generation_steps = self.keyGeneration()
+        
+        elif b is not None and n is not None:
+            self.b = b
+            self.n = n
+        
+        elif a is not None and p is not None and q is not None:
+            self.a = a
+            self.p = p
+            self.q = q
+
+        else:
+            raise ValueError("Invalid parameters: either (p, q, b) for generation or (b, n) for encryption or (a, p, q) for decryption are required.")
+
 
     def keyGeneration(self):
         """
@@ -102,13 +123,13 @@ class RSA():
         # Return the object with action, formula, and steps
         return main_step
 
-    def getKeyGenerationSteps(self):
+    def getKeyGeneration(self):
         """
-        Retrieves the key generation steps and resets the attribute.
+        Retrieves the key generation steps and resets the attribute. Also returns n and a.
         """
         steps = self._key_generation_steps  # Retrieve the steps
         self._key_generation_steps = None  # Reset the attribute
-        return steps
+        return steps, self.n, self.a
 
     def encrypt(self, x: int):
         """
