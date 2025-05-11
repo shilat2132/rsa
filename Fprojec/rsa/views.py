@@ -19,17 +19,24 @@ queues = {
     "decryption": {}
 }
 
-# Build a queue of all steps in a flattened structure while maintaining the path
-# Each element is (path, step)
+# Strip only the "steps" field from a single step (shallow)
+def strip_step(step):
+    step_copy = copy.deepcopy(step)
+    if "steps" in step_copy:
+        step_copy["steps"] = []
+    return step_copy
+
+# Build a flattened queue of steps while maintaining the path
 def build_queue(step, path=None):
     if path is None:
         path = []
 
     queue = []
-    # Add the current step
-    queue.append((path, step))
 
-    # If the step has substeps, recursively add them
+    # Append a stripped version of the current step (shallow strip)
+    queue.append((path, strip_step(step)))
+
+    # Continue recursively on the original step (which includes steps)
     if "steps" in step:
         for idx, substep in enumerate(step["steps"]):
             subpath = path + ["steps", idx]
@@ -37,28 +44,7 @@ def build_queue(step, path=None):
 
     return queue
 
-# Remove all internal steps to send a lightweight main_step
-# Keeps only empty "steps": [] fields to preserve structure
-def strip_steps(step):
-    step = copy.deepcopy(step)
-    if "steps" in step:
-        step["steps"] = []
-    return step
 
-# Insert a chunk into the main_step structure according to the path
-def insert_steps(main_step, chunk):
-    for path, step in chunk:
-        target = main_step
-        for key in path[:-1]:
-            target = target[key]
-        if isinstance(path[-1], int):
-            # Insert at list index
-            while len(target) <= path[-1]:
-                target.append(None)
-            target[path[-1]] = step
-        else:
-            # Insert as a dictionary field
-            target[path[-1]] = step
 
 # Return a chunk of steps from the queue
 # chunk_size defines how many steps are sent each time
@@ -78,7 +64,6 @@ def key(request):
         data = json.loads(request.body)
 
         if "fetch_chunk" in data:
-            # Client asks for next chunk
             queue = queues["key"].get("queue")
             if queue is None:
                 return JsonResponse({"error": "No key generation in progress."}, status=400)
@@ -103,20 +88,22 @@ def key(request):
         queues["key"]["queue"] = queue
 
         # Return stripped main_step without internal steps
-        return JsonResponse({'a': a, 'n': n, 'b': b, 'p': p, 'q': q, 'main_step': strip_steps(main_step)})
+        
+        return JsonResponse({
+            'a': a,
+            'n': n,
+            'b': b,
+            'p': p,
+            'q': q,
+            'main_step': copy.deepcopy(queue[0][1])
+        })
 
 @csrf_exempt
 def encryption(request):
-    """
-    Encrypt a number using RSA public key.
-    First call returns the stripped main_step.
-    Next calls return chunks of steps.
-    """
     if request.method == 'POST':
         data = json.loads(request.body)
 
         if "fetch_chunk" in data:
-            # Client asks for next chunk
             queue = queues["encryption"].get("queue")
             if queue is None:
                 return JsonResponse({"error": "No encryption in progress."}, status=400)
@@ -124,7 +111,6 @@ def encryption(request):
             chunk = get_chunk(queue)
             return JsonResponse({"chunk": chunk, "finished": len(queue) == 0})
 
-        # Regular request to start encryption
         x = int(data['x'])
         b = data['b']
         nList = data['n']
@@ -132,25 +118,21 @@ def encryption(request):
         rsaEncrypt = RSA(b=b, n=nList)
         main_step, y = rsaEncrypt.encrypt(x)
 
-        # Build queue
         queue = build_queue(main_step)
         queues["encryption"]["queue"] = queue
 
-        # Return stripped main_step without internal steps
-        return JsonResponse({'y': y, "main_step": strip_steps(main_step)})
+        return JsonResponse({
+            'y': y,
+            "main_step": copy.deepcopy(queue[0][1])
+        })
+
 
 @csrf_exempt
 def decryption(request):
-    """
-    Decrypt a number using RSA private key.
-    First call returns the stripped main_step.
-    Next calls return chunks of steps.
-    """
     if request.method == 'POST':
         data = json.loads(request.body)
 
         if "fetch_chunk" in data:
-            # Client asks for next chunk
             queue = queues["decryption"].get("queue")
             if queue is None:
                 return JsonResponse({"error": "No decryption in progress."}, status=400)
@@ -158,7 +140,6 @@ def decryption(request):
             chunk = get_chunk(queue)
             return JsonResponse({"chunk": chunk, "finished": len(queue) == 0})
 
-        # Regular request to start decryption
         y = int(data['y'])
         a = data['a']
         p = data['p']
@@ -168,9 +149,10 @@ def decryption(request):
         rsaDecrypt = RSA(a=a, p=p, q=q, n=n)
         main_step, x = rsaDecrypt.decrypt(y)
 
-        # Build queue
         queue = build_queue(main_step)
         queues["decryption"]["queue"] = queue
 
-        # Return stripped main_step without internal steps
-        return JsonResponse({"x": x, "main_step": strip_steps(main_step)})
+        return JsonResponse({
+            "x": x,
+            "main_step": copy.deepcopy(queue[0][1])
+        })

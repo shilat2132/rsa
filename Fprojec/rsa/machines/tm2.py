@@ -137,7 +137,7 @@ class Tm:
             elif m == 'S':
                 spaces.append(0)
 
-        step["write"] = write
+        step["write"] = write if write!= None else []
         step["spaces"] = spaces
         # return the new current state
         return newState, step
