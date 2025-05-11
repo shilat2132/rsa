@@ -48,7 +48,10 @@ def build_queue(step, path=None):
 
 # Return a chunk of steps from the queue
 # chunk_size defines how many steps are sent each time
-def get_chunk(queue, chunk_size=10):
+def get_chunk(queue, chunk_size=100):
+    if len(queue) < chunk_size:
+        chunk = queue
+        del queue[:len(queue)]
     chunk = queue[:chunk_size]
     del queue[:chunk_size]
     return chunk
@@ -90,11 +93,13 @@ def key(request):
         # Return stripped main_step without internal steps
         
         return JsonResponse({
-            'a': a,
-            'n': n,
-            'b': b,
-            'p': p,
-            'q': q,
+            "results": {
+                'a': a,
+                'n': n,
+                'b': b,
+                'p': p,
+                'q': q
+            },
             'main_step': copy.deepcopy(queue[0][1])
         })
 
@@ -122,7 +127,7 @@ def encryption(request):
         queues["encryption"]["queue"] = queue
 
         return JsonResponse({
-            'y': y,
+            "results": {'y': y},
             "main_step": copy.deepcopy(queue[0][1])
         })
 
@@ -153,6 +158,6 @@ def decryption(request):
         queues["decryption"]["queue"] = queue
 
         return JsonResponse({
-            "x": x,
+            "results": {"x": x},
             "main_step": copy.deepcopy(queue[0][1])
         })
