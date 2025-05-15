@@ -39,7 +39,7 @@ def build_queue(step, path=None):
     # Continue recursively on the original step (which includes steps)
     if "steps" in step:
         for idx, substep in enumerate(step["steps"]):
-            subpath = path + ["steps", idx]
+            subpath = path + [idx]
             queue.extend(build_queue(substep, subpath))
 
     return queue
