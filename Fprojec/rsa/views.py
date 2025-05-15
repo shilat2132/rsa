@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 import copy
+import math
 
 # In-memory queues to hold steps for chunked sending
 queues = {
@@ -18,6 +19,8 @@ queues = {
     "encryption": {},
     "decryption": {}
 }
+
+chunk_size = 100
 
 # Strip only the "steps" field from a single step (shallow)
 def strip_step(step):
@@ -48,7 +51,7 @@ def build_queue(step, path=None):
 
 # Return a chunk of steps from the queue
 # chunk_size defines how many steps are sent each time
-def get_chunk(queue, chunk_size=100):
+def get_chunk(queue):
     if len(queue) < chunk_size:
         chunk = queue
         del queue[:len(queue)]
@@ -93,6 +96,7 @@ def key(request):
         # Return stripped main_step without internal steps
         
         return JsonResponse({
+            "total_chuncks": math.ceil(len(queue)//chunk_size),
             "results": {
                 'a': a,
                 'n': n,
@@ -100,6 +104,7 @@ def key(request):
                 'p': p,
                 'q': q
             },
+            
             'main_step': copy.deepcopy(queue[0][1])
         })
 
