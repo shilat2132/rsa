@@ -31,6 +31,8 @@ class Subtraction(Tm):
 
         deltaTable ={
             ("s", 0, "_", "_") : {"newState": "copyA", "movement": ['S', "S", "S"]},
+            ("s", "_", "_", "_") : {"newState": "acc", "movement": ['S', "S", "S"]},
+
             ("s", 1, "_", "_") : {"newState": "copyA", "movement": ['S', "S", "S"]},
 
             ("s", "_", 0, "_") : {"newState": "copyB", "movement": ['S', "L", "S"]},
