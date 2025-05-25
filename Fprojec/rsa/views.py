@@ -53,8 +53,9 @@ def build_queue(step, path=None):
 # chunk_size defines how many steps are sent each time
 def get_chunk(queue):
     if len(queue) < chunk_size:
-        chunk = queue
+        chunk = copy.deepcopy(queue)
         del queue[:len(queue)]
+        return chunk
     chunk = queue[:chunk_size]
     del queue[:chunk_size]
     return chunk
@@ -96,7 +97,7 @@ def key(request):
         # Return stripped main_step without internal steps
         
         return JsonResponse({
-            "total_chuncks": math.ceil(len(queue)//chunk_size),
+            "total_chunks": math.ceil(len(queue)/chunk_size),
             "results": {
                 'a': a,
                 'n': n,
