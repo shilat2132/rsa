@@ -114,10 +114,12 @@ class RSA():
         # Set the private key 'a'
         self.a = euclidMachine.t()
 
+        machine_tapes = [self.n, self.phi, self.a]
         step = {
             "action" : "updateMachine",
             "tapes": machine_tapes
         }
+       
         steps.append(step)
 
        

@@ -169,8 +169,10 @@ class Subtraction(Tm):
             if self.currentState == "comp1":
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(self.tapes[1])
+                    "tapes": copy.deepcopy([self.tapes[1]]),
+                    "formula": "complement machine"
                 }
+                
                 sts = complement(self.tapes[1])  # converts b to its two's complement
                 subMachineStep["steps"] = sts
                 steps.append(subMachineStep)
@@ -189,7 +191,8 @@ class Subtraction(Tm):
 
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(addMachine.tapes)
+                    "tapes": copy.deepcopy(addMachine.tapes),
+                    "formula": "addition machine"
                 }
 
                 sts = addMachine.runMachine()  # c = a + b' (b' is the two's complement of b)
@@ -214,7 +217,8 @@ class Subtraction(Tm):
             elif self.currentState == "compResult":
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(self.tapes[2])
+                    "tapes": copy.deepcopy([self.tapes[2]]),
+                    "formula": "complement machine"
                 }
 
                 sts = complement(self.tapes[2])
@@ -238,7 +242,8 @@ class Subtraction(Tm):
 
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(addMachine.tapes)
+                    "tapes": copy.deepcopy(addMachine.tapes),
+                    "formula": "addition machine"
                 }
 
                 sts = addMachine.runMachine()  # c = a + b
@@ -261,7 +266,8 @@ class Subtraction(Tm):
 
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(addMachine.tapes)
+                    "tapes": copy.deepcopy(addMachine.tapes),
+                    "formula": "addition machine"
                 }
 
                 sts = addMachine.runMachine()  # c = a + b
@@ -282,7 +288,8 @@ class Subtraction(Tm):
 
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(subMachine.tapes)
+                    "tapes": copy.deepcopy(subMachine.tapes),
+                    "formula": "subtraction machine"
                 }
 
                 sts = subMachine.runMachine()  # c = b - a

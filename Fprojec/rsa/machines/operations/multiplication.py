@@ -154,8 +154,11 @@ class Multiplication(Tm):
 
                 subMachineStep = {
                     "action": "submachine",
-                    "tapes": copy.deepcopy(addMachine.tapes)  # Use addMachine.tapes
+                    "tapes": copy.deepcopy(addMachine.tapes),  # Use addMachine.tapes
+                    "formula": "addition machine"
                 }
+
+                
                 sts = addMachine.runMachine()  # y = a + y
                 subMachineStep["steps"] = sts
                 steps.append(subMachineStep)

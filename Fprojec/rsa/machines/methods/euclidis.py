@@ -144,8 +144,12 @@ class Euclid(Tm):
         divMachine = Division([self.tapes[sIndex], self.ring2])  # s % b
         subMachineStep = {
             "action": "submachine",
-            "tapes": copy.deepcopy(divMachine.tapes)
+            "tapes": copy.deepcopy(divMachine.tapes),
+            "formula": "remainder/division machine"
         }
+        
+      
+
         sts = divMachine.runMachine()
         subMachineStep["steps"] = sts
         steps.append(subMachineStep)
@@ -161,8 +165,11 @@ class Euclid(Tm):
         divMachine = Division([self.tapes[tIndex], self.ring1])  # t % a
         subMachineStep = {
             "action": "submachine",
-            "tapes": copy.deepcopy(divMachine.tapes)
+            "tapes": copy.deepcopy(divMachine.tapes),
+            "formula": "remainder/division machine"
         }
+
+        
         sts = divMachine.runMachine()
         subMachineStep["steps"] = sts
         steps.append(subMachineStep)
@@ -189,8 +196,10 @@ class Euclid(Tm):
         mulMachine = Multiplication(tapes)
         subMachineStep = {
             "action": "submachine",
-            "tapes": copy.deepcopy(mulMachine.tapes)
+            "tapes": copy.deepcopy(mulMachine.tapes),
+            "formula": "multiplication machine"
         }
+
         sts = mulMachine.runMachine()
         subMachineStep["steps"] = sts
         steps.append(subMachineStep)
@@ -200,8 +209,11 @@ class Euclid(Tm):
         subMachine = Subtraction(tapes)
         subMachineStep = {
             "action": "submachine",
-            "tapes": copy.deepcopy(subMachine.tapes)
+            "tapes": copy.deepcopy(subMachine.tapes),
+            "formula": "subtraction machine"
         }
+
+      
         sts = subMachine.runMachine()
         subMachineStep["steps"] = sts
         steps.append(subMachineStep)

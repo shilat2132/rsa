@@ -135,7 +135,10 @@ class Division(Tm):
                 subMachineStep = {
                     "action": "submachine",
                     "tapes": copy.deepcopy(subMachine.tapes),
+                    "formula": "subtraction machine"
                 }
+
+                
                 sts = subMachine.runMachine() # r = m -b
                 subMachineStep["steps"] = sts
                 steps.append(subMachineStep)
@@ -192,7 +195,9 @@ class Division(Tm):
                 subMachineStep = {
                     "action": "submachine",
                     "tapes": copy.deepcopy(subMachine.tapes),
+                    "formula": "subtraction machine"
                 }
+                
                 sts = subMachine.runMachine()
                 subMachineStep["steps"] = sts
                 steps.append(subMachineStep)

@@ -24,13 +24,17 @@ def complement(a: list):
             tapes = [a.copy(), [1], a]
             addMachine = Addition(tapes)  # Create the addMachine first
 
-            subMachibeStep = {
+            subMachineStep = {
                 "action": "submachine",
-                "tapes": copy.deepcopy(addMachine.tapes)
+                "tapes": copy.deepcopy(addMachine.tapes),
+                "formula": "addition machine"
             }
+            
+            
+            
             sts = addMachine.runMachine()
-            subMachibeStep["steps"] = sts
-            steps.append(subMachibeStep)
+            subMachineStep["steps"] = sts
+            steps.append(subMachineStep)
 
             # Add the updateTapeStep right after the subMachineStep is appended
             updateTapeStep = {
