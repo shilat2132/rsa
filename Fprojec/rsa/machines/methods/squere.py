@@ -70,8 +70,8 @@ class Squere(Tm):
 
             # initM -> copyM
             #  if k>=0: m = x 
-            ("initM", "1", "0", "1", "_", "1") : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
-            ("initM", "1", "1", "1", "_", "1") : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("initM", 1, 0, 1, "_" , 1) : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("initM", 1, 1, 1, "_", 1) : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
 
             ("initM", 0, 0, 0, "_", 0) : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
             ("initM", 0, 0, 1, "_", 0) : {"newState": "copyM",  "movement": ['S', 'S', 'S', 'S', 'S']},
@@ -95,17 +95,17 @@ class Squere(Tm):
 
 
             # loop -> checkCond - done
-            ("loop", "1", "0", "1", "1", "1") : {"newState": "checkCond",  "movement": ['S', 'L', 'S', 'S', 'S']}, 
+            ("loop", 1, 0, 1, 1, 1) : {"newState": "checkCond",  "movement": ['S', 'L', 'S', 'S', 'S']}, 
 
             # loop -> updateY - done
-            ("loop", "1", "1", "1", "1", "1") : {"newState": "updateY",  "movement": ['S', 'L', 'S', 'S', 'S']},
+            ("loop", 1, 1, 1, 1, 1) : {"newState": "updateY",  "movement": ['S', 'L', 'S', 'S', 'S']},
 
             # checkCond -> loop
-            ("checkCond", "1", "0", "1", "1", "1") : {"newState": "loop",  "movement": ['S', 'S', 'S', 'S', 'S']},
-            ("checkCond", "1", "1", "1", "1", "1") : {"newState": "loop",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("checkCond", 1, 0, 1, 1, 1) : {"newState": "loop",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("checkCond", 1, 1, 1, 1, 1) : {"newState": "loop",  "movement": ['S', 'S', 'S', 'S', 'S']},
 
             #checkCond -> acc
-            ("checkCond", "1", "_", "1", "1", "1") : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
+            ("checkCond", 1, "_", 1, 1, 1) : {"newState": "acc",  "movement": ['S', 'S', 'S', 'S', 'S']},
 
 
         }

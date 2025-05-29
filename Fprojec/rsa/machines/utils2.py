@@ -1,3 +1,31 @@
+import itertools
+
+def find_in_delta_table(delta_table, current_state, symbols):
+    interchangeable = {'_', 0}
+
+    # נסה התאמה מדויקת
+    delta_input = (current_state,) + tuple(symbols)
+    if delta_input in delta_table:
+        return delta_table[delta_input]
+
+    # נסה התאמות מבוססות שקילות
+    indices_to_alternate = [i for i, s in enumerate(symbols) if s in interchangeable]
+
+    for replacements in itertools.product(interchangeable, repeat=len(indices_to_alternate)):
+        altered = list(symbols)
+        for i, index in enumerate(indices_to_alternate):
+            altered[index] = replacements[i]
+
+        delta_input = (current_state,) + tuple(altered)
+        if delta_input in delta_table:
+            return delta_table[delta_input]
+
+    raise KeyError(f"No match found in delta table for state {current_state} and symbols {symbols}")
+
+
+
+
+
 def print_steps(steps, indent=0):
     for step in steps:
         if step.get("action") == "submachine" or step.get("action") == "main":  # Handle "submachine" separately
@@ -37,31 +65,7 @@ def decimalToBinaryList(num, minus = False):
     
     return a
 
-# def getHeadIndex(tape: list)-> int:
-#     """
-#     given a tape (list), return the index of the first character that's different from "_".
-#         - if all characters are "_", returns 0 (the first index)
-#     """
-#     l = len(tape)
-#     head=0
-#     hasOne = False
-#     foundZero = False
 
-#     for i in range(l):
-#         # position the head on the first character cause all of the 0 or _ don't matter
-#         if tape[i]== 1: 
-#             hasOne = True
-#             head=i
-#             break
-#         if tape[i] == 0 and not foundZero:
-#             foundZero = True
-#             head = i #if there are only _ and 0s, it would set the head to the first 0, and later cut all the following charaters if there are any (to prevent a case of 0 0 0 0 ...)
-    
-#     if(not hasOne):
-#         # if there aren't any 1s and the head is on either 0 or _ , cut all the following characters from where the head is positioned
-#         tape = tape[:head+1]
-       
-#     return head
 
 def getLastCharIndex(tape: list)-> int:
     """
@@ -105,3 +109,27 @@ def isZero(tape: list):
             return False
         
     return True
+
+def tapeToBinaryString(tape: list) -> str:
+    """
+    Given a Turing tape (list) with elements '_', 0, and 1,
+    returns the binary number as a string with '0b' prefix (e.g., '0b1011').
+    Ignores '_' characters.
+    """
+    return '0b' + ''.join(str(x) for x in tape if x in (0, 1))
+
+
+def is_prime(n):
+    if n <= 1:
+        return False
+    if n == 2:
+        return True
+    if n % 2 == 0:
+        return False
+    for i in range(3, int(n**0.5) + 1, 2):
+        if n % i == 0:
+            return False
+    return True
+
+
+

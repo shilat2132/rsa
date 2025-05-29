@@ -1,5 +1,5 @@
 
-from utils2 import getHeadIndex, binaryToDecimal
+from utils2 import getHeadIndex, binaryToDecimal, find_in_delta_table
 
 class Tm:
     """
@@ -113,13 +113,28 @@ class Tm:
         # create the symbols
         symbols = [t[pos[i]] for i, t in enumerate(tapes)]
         # create the input for the delta table and extract the transition from the table
-        deltaInput = (currentState,) + tuple(symbols)
-        if deltaInput not in deltaTable:
-            raise KeyError(f"the key {deltaInput} is not in the delta table")
+
+       
+
+        try:
+            deltaOutput = find_in_delta_table(deltaTable, currentState, symbols)
+        except KeyError as e:
+            raise RuntimeError(f"Delta table lookup failed: {e}")
+
+       
+
+        # deltaInput = (currentState,) + tuple(symbols)
+
+        # if deltaInput not in deltaTable:
+        #     raise KeyError(f"the key {deltaInput} is not in the delta table")
             
-        deltaOutput = deltaTable[deltaInput]
+        # deltaOutput = deltaTable[deltaInput]
+
         write = deltaOutput["write"] if "write" in deltaOutput else None
         newState, movements = deltaOutput["newState"], deltaOutput["movement"]
+
+        
+    
 
         # simulate writing in the tapes
         if write is not None:

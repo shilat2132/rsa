@@ -66,10 +66,10 @@ class RSA():
         
         returns the main step object
         """
-        machine_tapes = [self.n, self.phi, self.a]
+        machine_tapes = [self.p, self.q, self.b, self.n, self.phi, self.a]
 
         main_step = {
-            "action": "main",
+            "action": "submachine",
             "formula": "generation of the n (public key) and a (private key)",
             "tapes": copy.deepcopy(machine_tapes)
         }
@@ -114,7 +114,7 @@ class RSA():
         # Set the private key 'a'
         self.a = euclidMachine.t()
 
-        machine_tapes = [self.n, self.phi, self.a]
+        machine_tapes = [self.p, self.q, self.b, self.n, self.phi, self.a]
         step = {
             "action" : "updateMachine",
             "tapes": machine_tapes
@@ -135,18 +135,16 @@ class RSA():
         self._key_generation_steps = None  # Reset the attribute
         return steps, self.n, self.a
 
-    def encrypt(self, x: int):
+    def encrypt(self, x: int, xList):
         """
         returns the main step object of the encryption process and y
         """
         steps = []
 
         
-        # Convert x to binary list
-        xList = decimalToBinaryList(x)
         machine_tapes = [xList, self.b, self.n, ["_"]]
         main_step = {
-            "action": "main",
+            "action": "submachine",
             "formula":  f"Encrypt {x}",
             "tapes": copy.deepcopy(machine_tapes)
         }
@@ -166,31 +164,29 @@ class RSA():
         y = square.result()
         encryptedValue = binaryToDecimal(y)
 
+        machine_tapes = [xList, self.b, self.n, y.copy()]
+
         updateTapeStep = {
-            "action": "updateTape",
-            "tape_index": 3, 
-            "tape": y.copy()
+            "action": "updateMachine",
+            "tapes": machine_tapes
         }
         steps.append(updateTapeStep)
 
         main_step["steps"] = steps
 
         print(f"The encrypted value of {x} is: {encryptedValue}")
-        return main_step, y
+        return main_step, encryptedValue, y
 
-    def decrypt(self, y: int):
+    def decrypt(self, y: int, yList):
         """
         Decrypts the given integer y.
         returns a main step object and the decrypted x list.
         """
         steps = []
 
-        # Convert y to binary list
-        yList = decimalToBinaryList(y)
-
-        machine_tapes = [yList, ["_"]]
+        machine_tapes = [self.p, self.q, self.n, self.a, yList, ["_"]]
         main_step = {
-            "action": "main",
+            "action": "submachine",
             "formula": f"Decrypt {y}",
             "tapes": copy.deepcopy(machine_tapes)
         }
@@ -269,17 +265,17 @@ class RSA():
         x = crtMachine.getX()
         decryptedValue = binaryToDecimal(x)
 
-        updateTapeStep = {
-            "action": "updateTape",
-            "tape_index": 1,  
-            "tape": x.copy()
+        machine_tapes = [self.p, self.q, self.n, self.a, yList, x.copy()]
+        updateMachineStep = {
+            "action": "updateMachine",
+            "tapes": machine_tapes
         }
-        steps.append(updateTapeStep)
+        steps.append(updateMachineStep)
 
         main_step["steps"] = steps
 
         print(f"The decrypted value of {y} is: {decryptedValue}")
-        return main_step, x
+        return main_step, decryptedValue, x
 
     def __repr__(self):
         """

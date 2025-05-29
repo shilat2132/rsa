@@ -1,10 +1,11 @@
 import sys
 import os
+from math import gcd
 
 # Add the 'machines' directory to sys.path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'machines'))
 
-from utils2 import binaryToDecimal, decimalToBinaryList
+from utils2 import binaryToDecimal, decimalToBinaryList, tapeToBinaryString, is_prime
 from RSA import RSA
 
 from django.views.decorators.csrf import csrf_exempt
@@ -79,19 +80,38 @@ def key(request):
             return JsonResponse({"chunk": chunk, "finished": len(queue) == 0})
 
         # Regular request to start key generation
-        p = int(data['p'])
-        q = int(data['q'])
-        b = int(data['b'])
+        try:
+            p = int(data['p'])
+            q = int(data['q'])
+            b = int(data['b'])
+        except (ValueError, KeyError):
+            return JsonResponse({"error": "Inputs must be integers."}, status=400)
 
-        p = decimalToBinaryList(p)
-        q = decimalToBinaryList(q)
-        b = decimalToBinaryList(b)
+        # Check all numbers are greater than 0 and are integers
+        if not (isinstance(p, int) and isinstance(q, int) and isinstance(b, int)):
+            return JsonResponse({"error": "Inputs must be integers."}, status=400)
+        if p <= 0 or q <= 0 or b <= 0:
+            return JsonResponse({"error": "Inputs must be greater than 0."}, status=400)
 
-        rsa = RSA(p, q, b)
-        main_step, n, a = rsa.getKeyGeneration()
+        # Check if p and q are primes
+        if not is_prime(p) or not is_prime(q):
+            return JsonResponse({"error": "p and q must be prime numbers."}, status=400)
+
+        # Check whether gcd(b, phi_n) == 0
+        phi_n = (p - 1) * (q - 1)
+        if gcd(b, phi_n) != 1:
+            return JsonResponse({"error": "gcd(b, phi_n) must be 1."}, status=400)
+
+        pList = decimalToBinaryList(p)
+        qList = decimalToBinaryList(q)
+        bList = decimalToBinaryList(b)
+
+        rsa = RSA(pList, qList, bList)
+        main_step, nList, aList = rsa.getKeyGeneration()
+        n, a = binaryToDecimal(nList), binaryToDecimal(aList)
 
         # Build queue
-        queue = build_queue(main_step)
+        queue = build_queue(main_step, [0])
         queues["key"]["queue"] = queue
 
         # Return stripped main_step without internal steps
@@ -99,11 +119,18 @@ def key(request):
         return JsonResponse({
             "total_chunks": math.ceil(len(queue)/chunk_size),
             "results": {
-                'a': a,
-                'n': n,
-                'b': b,
                 'p': p,
-                'q': q
+                'q': q,
+                'b': b,
+                'n': n,
+                'a': a,
+                "resLists": {
+                    'p': tapeToBinaryString(pList), 
+                    'q': tapeToBinaryString(qList), 
+                    'b': tapeToBinaryString(bList), 
+                    'n': tapeToBinaryString(nList), 
+                    'a': tapeToBinaryString(aList) }
+
             },
             
             'main_step': copy.deepcopy(queue[0][1])
@@ -123,17 +150,36 @@ def encryption(request):
             return JsonResponse({"chunk": chunk, "finished": len(queue) == 0})
 
         x = int(data['x'])
-        b = data['b']
-        nList = data['n']
+        b = int(data['b'])
+        n = int(data['n'])
 
-        rsaEncrypt = RSA(b=b, n=nList)
-        main_step, y = rsaEncrypt.encrypt(x)
+        if not isinstance(x, int):
+            return JsonResponse({"error": "x must be an integer."}, status=400)
+        if x <= 0:
+            return JsonResponse({"error": "x must be greater than 0."}, status=400)
+        if x >= n:
+            return JsonResponse({"error": "x must be less than n."}, status=400)
 
-        queue = build_queue(main_step)
+        xList = decimalToBinaryList(x)
+        bList = decimalToBinaryList(b)
+        nList = decimalToBinaryList(n)
+       
+        rsaEncrypt = RSA(b=bList, n=nList)
+        main_step, y, yList = rsaEncrypt.encrypt(x, xList)
+
+        queue = build_queue(main_step, [0])
         queues["encryption"]["queue"] = queue
 
         return JsonResponse({
-            "results": {'y': y},
+            "total_chunks": math.ceil(len(queue)/chunk_size),
+            "results": {
+                'y': y,
+                'x': x,
+                "resLists": {
+                    'y': tapeToBinaryString(yList),
+                    'x': tapeToBinaryString(xList)
+                }
+            },
             "main_step": copy.deepcopy(queue[0][1])
         })
 
@@ -152,18 +198,40 @@ def decryption(request):
             return JsonResponse({"chunk": chunk, "finished": len(queue) == 0})
 
         y = int(data['y'])
-        a = data['a']
-        p = data['p']
-        q = data['q']
-        n = data['n']
+        a = int(data['a'])
+        p = int(data['p'])
+        q = int(data['q'])
+        n = int(data['n'])
 
-        rsaDecrypt = RSA(a=a, p=p, q=q, n=n)
-        main_step, x = rsaDecrypt.decrypt(y)
+        if not isinstance(y, int):
+            return JsonResponse({"error": "y must be an integer."}, status=400)
+        if y <= 0:
+            return JsonResponse({"error": "y must be greater than 0."}, status=400)
+        if y >= n:
+            return JsonResponse({"error": "y must be less than n."}, status=400)
 
-        queue = build_queue(main_step)
+
+        yList = decimalToBinaryList(y)
+        aList = decimalToBinaryList(a)
+        pList = decimalToBinaryList(p)
+        qList = decimalToBinaryList(q)
+        nList = decimalToBinaryList(n)
+
+        rsaDecrypt = RSA(a=aList, p=pList, q=qList, n=nList)
+        main_step, x, xList = rsaDecrypt.decrypt(y, yList)
+
+        queue = build_queue(main_step, [0])
         queues["decryption"]["queue"] = queue
 
         return JsonResponse({
-            "results": {"x": x},
+            "total_chunks": math.ceil(len(queue)/chunk_size),
+            "results": {
+                "y": y,
+                "x": x,
+                "resLists": {
+                    'x': tapeToBinaryString(xList),
+                    'y': tapeToBinaryString(yList)
+                }
+            },
             "main_step": copy.deepcopy(queue[0][1])
         })
