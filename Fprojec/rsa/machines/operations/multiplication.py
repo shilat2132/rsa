@@ -145,6 +145,12 @@ class Multiplication(Tm):
                 self.currentState = "start"
                 sts = self.addMinus()
                 steps.extend(sts)
+                updateTapeStep = {
+                    "action": "updateTape",
+                    "tape_index": 2,
+                    "tape": self.tapes[2].copy()
+                }
+                steps.append(updateTapeStep) 
                 break
 
             if self.currentState == "add":
