@@ -121,19 +121,8 @@ class Tm:
         except KeyError as e:
             raise RuntimeError(f"Delta table lookup failed: {e}")
 
-       
-
-        # deltaInput = (currentState,) + tuple(symbols)
-
-        # if deltaInput not in deltaTable:
-        #     raise KeyError(f"the key {deltaInput} is not in the delta table")
-            
-        # deltaOutput = deltaTable[deltaInput]
-
         write = deltaOutput["write"] if "write" in deltaOutput else None
         newState, movements = deltaOutput["newState"], deltaOutput["movement"]
-
-        
     
 
         # simulate writing in the tapes
@@ -157,26 +146,6 @@ class Tm:
         # return the new current state
         return newState, step
 
-    @staticmethod
-    def config(tapes: list[list], currentState, pos):
-            """
-            for each tape (i) presents a string of "uq sigma v", where:
-                - u= the left side of the head of tape i
-                - q = current state
-                - sigma = the symbol in the head of tape i
-                - v= the right side of the head in tape i
-            
-                returns: the string of the configuration
-            """
-            q = currentState
-            config = "configuration: \n"
-            for i, t in enumerate(tapes):
-                p = pos[i]
-                u, sigma, v = t[:p], t[p], t[p+1:]
-                config += f"tape {i}: {u} & {q} & {sigma} & {v}  \n"
-            return config
-
-
     
 
     @staticmethod
@@ -195,18 +164,10 @@ class Tm:
         if not pos:
             pos = [getHeadIndex(t) for t in tapes]
 
-        #  {
-        #   "action": "step",
-        #   "pos": [2, 2],
-        #   "write": [0, 1],
-        #   "spaces": [0, 1]
-        # }
         steps = []
-        # config = Tm.config(tapes, currentState, pos) + "\n"
         
         while currentState != acc and currentState != rej:
             currentState, step = Tm.staticStep(tapes, currentState, deltaTable, pos)
-            # config+=Tm.config(tapes, currentState, pos) + "\n"
             steps.append(step)
         
         return currentState, steps
