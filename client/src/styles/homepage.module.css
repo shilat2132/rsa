@@ -1,0 +1,163 @@
+.container {
+  background: linear-gradient(to bottom, #ffffff, #dbeafe);
+}
+
+.mainContent {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+}
+
+.twoColumnLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sectionCard {
+  background: #eff6ff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  border: 1px solid #bfdbfe;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #1e40af;
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.stepCard {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.stepTitle {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  color: #1e3a8a;
+}
+
+.stepDescription {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.simulationCard {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.simulationIcon {
+  font-size: 1.5rem;
+}
+
+.simulationTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #1f2937;
+}
+
+.simulationDescription {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.simulationButton {
+  background: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.simulationButton:hover {
+  background: #2563eb;
+}
+
+.simulationButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.statusReady {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.statusNeedsKeys {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.exampleSetGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.exampleCard {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
+}
+
+@media (min-width: 768px) {
+  .stepsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .exampleSetGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,0 +1,72 @@
+
+.tapeWrapper {
+  margin-bottom: 1.5rem;
+  /* Ensure tape wrapper doesn't exceed container */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.tapeLabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.tapeContainer {
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  /* Constrain to parent container width */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.tape {
+  display: flex;
+  min-width: fit-content;
+  /* Don't let tape exceed reasonable bounds */
+  width: max-content;
+}
+
+.cell {
+  min-width: 2rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  background: white;
+  transition: all 0.3s ease;
+  font-family: monospace;
+  flex-shrink: 0;
+}
+
+.cellActive {
+  background: rgba(59, 130, 246, 0.2);
+  font-weight: bold;
+  border-color: #3b82f6;
+}
+
+.headIndicators {
+  display: flex;
+  min-width: fit-content;
+  width: max-content;
+}
+
+.headIndicator {
+  min-width: 2rem;
+  text-align: center;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headIndicatorActive {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.headIndicatorInvisible {
+  visibility: hidden;
+}

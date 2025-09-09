@@ -1,0 +1,70 @@
+
+.submachineStack {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.submachineWindow {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: rgba(239, 246, 255, 0.95); /* Light blue background */
+  border: 1px solid #93c5fd; /* Secondary blue */
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  width: 100%;
+  overflow: hidden;
+}
+
+.submachineWindow.topLevel {
+  z-index: 20;
+  position: relative;
+}
+
+.submachineWindow.background {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tapesContainer {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-x: auto;
+  max-width: 100%;
+  /* Contain scrolling within this container */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.submachineHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(239, 246, 255, 0.8);
+}
+
+.badge {
+  background-color: #3b82f6; /* Primary blue */
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.formula {
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 0.875rem;
+}

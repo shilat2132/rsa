@@ -1,0 +1,116 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 214 100% 60%; /* blue color */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 91% 79%; /* light blue color */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 217 91% 85%; /* light blue accent */
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 214 100% 60%; /* blue color */
+
+    --radius: 0.5rem;
+
+    /* Custom colors for the app */
+    --primary-blue: 214 100% 60%; /* #3b82f6 */
+    --secondary-blue: 217 91% 79%; /* #93c5fd */
+    --tertiary-blue: 214 90% 50%;
+    --dark-blue: 219 80% 20%;
+    --light-blue: 213 94% 85%;
+    --vivid-blue: 214 100% 60%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... keep existing code (dark mode colors) */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Custom module styles */
+.cell {
+  @apply w-10 h-10 border border-gray-300 flex items-center justify-center text-lg font-mono transition-all;
+}
+
+.cell.head {
+  @apply bg-primary/20 border-primary;
+}
+
+.cell.writing {
+  @apply bg-primary/40;
+}
+
+.tape-container {
+  @apply flex overflow-x-auto py-4 px-2 max-w-full;
+}
+
+.tape {
+  @apply flex min-w-max;
+}
+
+.head-indicator {
+  @apply text-center text-primary h-6 flex items-center justify-center;
+}
+
+.animation-slow {
+  --step-duration: 1.5s;
+}
+
+.animation-normal {
+  --step-duration: 1s;
+}
+
+.animation-fast {
+  --step-duration: 0.5s;
+}
+
+.animation-very-fast {
+  --step-duration: 0.25s;
+}
+
+.animation-ultra-fast {
+  --step-duration: 0.15s;
+}
+
+.animation-extreme-fast {
+  --step-duration: 0.1s;
+}
+
+.submachine {
+  @apply border-l-4 border-primary/50 pl-4 mt-4 mb-2;
+}
