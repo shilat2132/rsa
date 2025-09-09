@@ -40,15 +40,22 @@ It is both a **theoretical exploration** and a **practical educational tool** to
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/rsa-turing-machine.git
-cd rsa-turing-machine
+git clone https://github.com/shilat2132/rsa.git
+
+# make sure you are on the rsa directory
 
 # Backend setup
 cd server
 pip install -r requirements.txt
+
+#activate the virtual environment and the server
+venv\Scripts\activate
+cd Fprojec
 python manage.py runserver
+#keep this terminal window open
+
 
 # Frontend setup
-cd ../client
+cd client
 npm install
-npm run dev
+npm run start
