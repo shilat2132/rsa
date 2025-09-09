@@ -59,3 +59,6 @@ python manage.py runserver
 cd client
 npm install
 npm run start
+
+#click the following: ➜  Local:   http://localhost:8080/
+#this will open the browser to show the website itself
