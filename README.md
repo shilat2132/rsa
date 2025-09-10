@@ -62,3 +62,6 @@ npm run start
 
 #click the following: ➜  Local:   http://localhost:8080/
 #this will open the browser to show the website itself
+
+## License
+This project is licensed under the MIT License.
